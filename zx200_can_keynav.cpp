@@ -11,7 +11,7 @@
 
 #define cmd_interval 1000
 #define cmd1_interval 1000
-#define cmd2_interval 1000
+#define cmd2_interval 50
 
 struct frame
 {
@@ -57,7 +57,7 @@ struct machine_setting_cmd
 class can_handler
 {
   public:
-    can_handler(boost::asio::io_context &io, std::string can_port)
+    can_handler(boost::asio::io_context &io, std::string can_port, WINDOW *ui)
         : send_timer(io, boost::asio::chrono::milliseconds(cmd_interval)),
           send_timer1(io, boost::asio::chrono::milliseconds(cmd1_interval)),
           send_timer2(io, boost::asio::chrono::milliseconds(cmd2_interval)),
@@ -67,6 +67,8 @@ class can_handler
       auto const ep = canary::raw::endpoint{idx};
       sock.open();
       sock.bind(ep);
+
+      gwUI = ui;
 
       pi_cmd1 = boost::shared_ptr<pilot_pressure_cmd1>(new pilot_pressure_cmd1{});
       pi_cmd2 = boost::shared_ptr<pilot_pressure_cmd2>(new pilot_pressure_cmd2{});
@@ -156,7 +158,9 @@ class can_handler
     void start_receive()
     {
       sock.async_receive(canary::net::buffer(&recv_f, sizeof(recv_f)), boost::bind(&can_handler::handle_receive, this, boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred));
-      // wprintw(gwUI, "Received CAN frame, id: %x, len: %ld\n", recv_f.header.id(), recv_f.header.payload_length());
+      if(recv_f.header.payload_length()){
+        wprintw(gwUI, "Received CAN frame, id: %x, len: %ld\n", recv_f.header.id(), recv_f.header.payload_length());
+      }
     }
 
     void handle_receive(const boost::system::error_code &error,
@@ -173,6 +177,7 @@ class can_handler
     boost::shared_ptr<pilot_pressure_cmd2> pi_cmd2;
     boost::shared_ptr<machine_setting_cmd> setting_cmd;
     std::uint8_t alive_cnt;
+    WINDOW *gwUI;
     frame recv_f;
 };
 
@@ -228,6 +233,7 @@ int main(int argc, char **argv)
   wrefresh(gwSub[0]);
 
   canary::net::io_context ioc;
+  can_handler handler(ioc, "vcan0",gwUI);
   boost::thread t(boost::bind(&boost::asio::io_context::run, &ioc));
 
   pilot_pressure_cmd1 cmd1 = {};
