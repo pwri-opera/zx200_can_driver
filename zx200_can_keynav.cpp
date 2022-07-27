@@ -203,8 +203,10 @@ int main(int argc, char **argv)
 
   pilot_pressure_cmd1 cmd1 = {};
   pilot_pressure_cmd2 cmd2 = {};
-  machine_setting_cmd cmd3 = {};
-
+  machine_setting_cmd cmd3 =
+      {
+          50/*engin_rpm*/, 
+      };
   while (true)
   {
     com = wgetch(gwUI);
@@ -302,12 +304,12 @@ bool processKey(int com, pilot_pressure_cmd1 &cmd1, pilot_pressure_cmd2 &cmd2, m
     break;
   case ' ':
     boom_cmd = arm_cmd = bucket_cmd = swing_cmd = 0;
-    engine_rpm = 0;
+    engine_rpm = 50;
     break;
 
   case 'q': //end
     boom_cmd = arm_cmd = bucket_cmd = swing_cmd = 0;
-    engine_rpm = 0;
+    engine_rpm = 50;
     return false;
   }
 
