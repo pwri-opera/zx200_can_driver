@@ -3,6 +3,7 @@
 #include <canary/raw.hpp>
 #include <canary/socket_options.hpp>
 #include <iostream>
+#include <string>
 
 #include <boost/thread/thread.hpp>
 #include <boost/asio.hpp>
@@ -22,7 +23,7 @@ struct frame
 class can_handler
 {
   public:
-    can_handler(boost::asio::io_context &io, std::string can_port, WINDOW *ui)
+    can_handler(boost::asio::io_context &io, std::string can_port, int baudrate, WINDOW *ui)
         : send_timer(io, boost::asio::chrono::milliseconds(cmd_interval)),
           send_timer1(io, boost::asio::chrono::milliseconds(cmd1_interval)),
           send_timer2(io, boost::asio::chrono::milliseconds(cmd2_interval)),
@@ -150,6 +151,15 @@ bool processKey(int com, pilot_pressure_cmd1 &cmd1, pilot_pressure_cmd2 &cmd2, m
 
 int main(int argc, char **argv)
 {
+  if (argc != 3)
+  {
+    std::cerr << "Error\n"
+              << "Usage: " << argv[0] << " [can port] [baudrate]" << std::endl;
+    return -1;
+  }
+  std::string can_port(argv[1]);
+  int baudrate=std::__cxx11::stoi(argv[2]);
+  
   //ncurses setting
   WINDOW *gwSub[3], *gwUI;
 
@@ -198,7 +208,8 @@ int main(int argc, char **argv)
   wrefresh(gwSub[0]);
 
   canary::net::io_context ioc;
-  can_handler handler(ioc, "vcan0",gwUI);
+  can_handler handler(ioc, can_port, baudrate, gwUI);
+
   boost::thread t(boost::bind(&boost::asio::io_context::run, &ioc));
 
   pilot_pressure_cmd1 cmd1 = {};
