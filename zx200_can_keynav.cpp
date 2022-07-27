@@ -3,18 +3,10 @@
 #include <canary/raw.hpp>
 #include <canary/socket_options.hpp>
 #include <iostream>
-#include <thread>
 
-#include <boost/asio/co_spawn.hpp>
-#include <boost/asio/detached.hpp>
 #include <boost/thread/thread.hpp>
-#include <boost/asio/deadline_timer.hpp>
-#include <boost/asio/spawn.hpp>
 #include <boost/asio.hpp>
 #include <boost/make_shared.hpp>
-
-#include <boost/bind.hpp>
-
 #include <ncurses.h>
 
 #define cmd_interval 1000
