@@ -9,8 +9,7 @@
 #include <boost/make_shared.hpp>
 #include <ncurses.h>
 
-#define cmd_interval 1000
-#define cmd1_interval 1000
+#include "zx200_can.hpp"
 #define cmd2_interval 50
 
 struct frame
@@ -19,40 +18,6 @@ struct frame
   std::array<std::uint8_t, 8> payload;
 };
 
-struct pilot_pressure_cmd1
-{
-  std::uint8_t boom_raise;
-  std::uint8_t boom_lower;
-  std::uint8_t arm_dump;
-  std::uint8_t arm_crowd;
-  std::uint8_t bucket_dump;
-  std::uint8_t bucket_crowd;
-  std::uint8_t swing_left;
-  std::uint8_t swing_right;
-};
-
-struct pilot_pressure_cmd2
-{
-  std::uint8_t track_right_forward;
-  std::uint8_t track_left_forward;
-  std::uint8_t track_right_backward;
-  std::uint8_t track_left_backward;
-  std::uint8_t spare_A;
-  std::uint8_t spare_B;
-  std::uint8_t assist_A;
-  std::uint8_t assist_B;
-};
-
-struct machine_setting_cmd
-{
-  std::uint8_t engine_rpm;
-  std::uint8_t power_eco_mode;
-  std::uint8_t rabbit_turtle_mode;
-  std::uint8_t status_notice;
-  std::uint8_t yellow_lamp_cmd;
-  // byte3-7 is not assigned
-  // std::uint8_t alive_cnt;
-};
 
 class can_handler
 {
