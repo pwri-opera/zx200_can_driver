@@ -11,6 +11,9 @@
 #include <ncurses.h>
 
 #include "zx200_can.hpp"
+
+#define cmd_interval 10
+#define cmd1_interval 10
 #define cmd2_interval 50
 
 struct frame
