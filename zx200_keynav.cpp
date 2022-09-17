@@ -12,7 +12,6 @@
 
 #include "zx200_can.hpp"
 
-
 #include "zx200_dbc.hpp"
 
 #define cmd_interval 10
@@ -31,10 +30,14 @@ public:
     // gwUI = ui;
     pi_cmd1 = boost::shared_ptr<pilot_pressure_cmd1>(new pilot_pressure_cmd1{});
     pi_cmd2 = boost::shared_ptr<pilot_pressure_cmd2>(new pilot_pressure_cmd2{});
-    setting_cmd = boost::shared_ptr<machine_setting_cmd>(new machine_setting_cmd { 50,0,0,0,0});
-    boom_cmd = arm_cmd = bucket_cmd = swing_cmd = 0;
-    engine_rpm = 50;
+    setting_cmd = boost::shared_ptr<machine_setting_cmd>(new machine_setting_cmd { 900,0,0,0,0});
+    boom_pi_cmd = arm_pi_cmd = bucket_pi_cmd = swing_pi_cmd = 0;
+    engine_rpm = 900;
 
+    // for (const dbcppp::ISignal &sig : pi_cmd1_msg->Signals())
+    // {
+
+    // }
     int iport;
     int i;
     int status;
@@ -66,17 +69,20 @@ public:
 
     werase(gwSub[0]);
     wprintw(gwSub[0], "simple keybord controler\n\n");
-    wprintw(gwSub[0], " Instructions\n");
+    wprintw(gwSub[0], "Instructions:\n");
+    wprintw(gwSub[0], " Manipulators:\n");
     wprintw(gwSub[0], "  w:boom raise, s:boom lower\n");
-    wprintw(gwSub[0], "  e:arm dump, d:arm crowd\n");
-    wprintw(gwSub[0], "  r:bucket dump, f:bucket crowd\n");
+    wprintw(gwSub[0], "  e:arm crowd, d:arm dump\n");
+    wprintw(gwSub[0], "  r:bucket crowd, f:bucket dump\n");
     wprintw(gwSub[0], "  t:swing right, g:swing left\n\n");
-
+    wprintw(gwSub[0], " Tracks:\n");
+    wprintw(gwSub[0], "  u:left front, i:right front\n");
+    wprintw(gwSub[0], "  j:left back, k:right back\n\n");
     wprintw(gwSub[0], "  [SPACE]   All stop\n");
     wprintw(gwSub[0], "   q        Quit ");
 
     wrefresh(gwSub[0]);
-  }
+    }
   ~zx200_keynav()
   {
     delwin(gwSub[0]);
@@ -87,92 +93,101 @@ public:
   }
   bool update_command(int com)
   {
-
     switch (com)
     {
     case 'w':
-      boom_cmd += 5;
+      boom_pi_cmd += 0.02*5;
+      pilot_pressure_clamp(boom_pi_cmd);
       break;
     case 's':
-      boom_cmd -= 5;
+      boom_pi_cmd -= 0.02*5;
+      pilot_pressure_clamp(boom_pi_cmd);
       break;
     case 'e':
-      arm_cmd += 5;
+      arm_pi_cmd += 0.02*5;
+      pilot_pressure_clamp(arm_pi_cmd);
       break;
     case 'd':
-      arm_cmd -= 5;
+      arm_pi_cmd -= 0.02*5;
+      pilot_pressure_clamp(arm_pi_cmd);
       break;
     case 'r':
-      bucket_cmd += 5;
+      bucket_pi_cmd += 0.02*5;
+      pilot_pressure_clamp(bucket_pi_cmd);
       break;
     case 'f':
-      bucket_cmd -= 5;
+      bucket_pi_cmd -= 0.02*5;
+      pilot_pressure_clamp(bucket_pi_cmd);
       break;
     case 't':
-      swing_cmd += 5;
+      swing_pi_cmd += 0.02*5;
+      pilot_pressure_clamp(swing_pi_cmd);
       break;
     case 'g':
-      swing_cmd -= 5;
+      swing_pi_cmd -= 0.02*5;
+      pilot_pressure_clamp(swing_pi_cmd);
       break;
     case '+':
-      engine_rpm += 10;
+      engine_rpm += 100;
       break;
     case '-':
-      engine_rpm -= 10;
+      engine_rpm -= 100;
       break;
     case ' ':
-      boom_cmd = arm_cmd = bucket_cmd = swing_cmd = 0;
-      engine_rpm = 50;
+      arm_pi_cmd = bucket_pi_cmd = swing_pi_cmd = 0;
+      boom_pi_cmd = 0;
+      engine_rpm = 900;
       break;
 
     case 'q': // end
-      boom_cmd = arm_cmd = bucket_cmd = swing_cmd = 0;
-      engine_rpm = 50;
+      arm_pi_cmd = bucket_pi_cmd = swing_pi_cmd = 0;
+      boom_pi_cmd = 0;
+      engine_rpm = 900;
       return false;
     }
-    if (boom_cmd >= 0)
+    if (boom_pi_cmd >= 0)
     {
-      pi_cmd1->boom_raise = lever_clamp(boom_cmd);
-      pi_cmd1->boom_lower = 0;
+      pi_cmd1->boom_up = boom_pi_cmd; // boom_cmd);
+      pi_cmd1->boom_down = 0;
     }
     else
     {
-      pi_cmd1->boom_raise = 0;
-      pi_cmd1->boom_lower = abs(lever_clamp(boom_cmd));
+      pi_cmd1->boom_up = 0;
+      pi_cmd1->boom_down = abs(boom_pi_cmd);// abs(boom_cmd));
     }
-    if (arm_cmd >= 0)
+    if (arm_pi_cmd >= 0)
     {
-      pi_cmd1->arm_dump = lever_clamp(arm_cmd);
-      pi_cmd1->arm_crowd = 0;
-    }
-    else
-    {
+      pi_cmd1->arm_crowd = arm_pi_cmd;
       pi_cmd1->arm_dump = 0;
-      pi_cmd1->arm_crowd = abs(lever_clamp(arm_cmd));
-    }
-    if (bucket_cmd >= 0)
-    {
-      pi_cmd1->bucket_dump = lever_clamp(bucket_cmd);
-      pi_cmd1->bucket_crowd = 0;
     }
     else
     {
-      pi_cmd1->bucket_dump = 0;
-      pi_cmd1->bucket_crowd = abs(lever_clamp(bucket_cmd));
+      pi_cmd1->arm_crowd = 0;
+      pi_cmd1->arm_dump = abs(arm_pi_cmd);
     }
-    if (swing_cmd >= 0)
+    if (bucket_pi_cmd >= 0)
     {
-      pi_cmd1->swing_right = lever_clamp(swing_cmd);
+      pi_cmd1->bucket_crowd = bucket_pi_cmd;
+      pi_cmd1->bucket_dump = 0;
+    }
+    else
+    {
+      pi_cmd1->bucket_crowd = 0;
+      pi_cmd1->bucket_dump = abs(bucket_pi_cmd);
+    }
+    if (swing_pi_cmd >= 0)
+    {
+      pi_cmd1->swing_right = swing_pi_cmd;
       pi_cmd1->swing_left = 0;
     }
     else
     {
       pi_cmd1->swing_right = 0;
-      pi_cmd1->swing_left = abs(lever_clamp(swing_cmd));
+      pi_cmd1->swing_left = abs(swing_pi_cmd);
     }
     if (engine_rpm >= 0)
     {
-      setting_cmd->engine_rpm = lever_clamp(engine_rpm);
+      setting_cmd->engine_rpm = engine_rpm; // engine_rpm);
     }
     else
     {
@@ -190,15 +205,15 @@ public:
     werase(gwSub[1]);
     wprintw(gwSub[1], "Commands:\n");
 
-    wprintw(gwSub[1], " boom raise   %d [MPa]\n", pi_cmd1->boom_raise);
-    wprintw(gwSub[1], " boom lower   %d [MPa]\n", pi_cmd1->boom_lower);
-    wprintw(gwSub[1], " arm dump     %d [MPa]\n", pi_cmd1->arm_dump);
-    wprintw(gwSub[1], " arm crowd    %d [MPa]\n", pi_cmd1->arm_crowd);
-    wprintw(gwSub[1], " bucket dump  %d [MPa]\n", pi_cmd1->bucket_dump);
-    wprintw(gwSub[1], " bucket crowd %d [MPa]\n", pi_cmd1->bucket_crowd);
-    wprintw(gwSub[1], " swing right  %d [MPa]\n", pi_cmd1->swing_right);
-    wprintw(gwSub[1], " swing left   %d [MPa]\n\n", pi_cmd1->swing_left);
-    wprintw(gwSub[1], " engine rpm   %d [rpm]\n", setting_cmd->engine_rpm * 10);
+    wprintw(gwSub[1], " boom up   %2.2f [MPa]\n", pi_cmd1->boom_up);
+    wprintw(gwSub[1], " boom down   %2.2f [MPa]\n", pi_cmd1->boom_down);
+    wprintw(gwSub[1], " arm crowd     %2.2f [MPa]\n", pi_cmd1->arm_crowd);
+    wprintw(gwSub[1], " arm dump    %2.2f [MPa]\n", pi_cmd1->arm_dump);
+    wprintw(gwSub[1], " bucket crowd  %2.2f [MPa]\n", pi_cmd1->bucket_crowd);
+    wprintw(gwSub[1], " bucket dump %2.2f [MPa]\n", pi_cmd1->bucket_dump);
+    wprintw(gwSub[1], " swing right  %2.2f [MPa]\n", pi_cmd1->swing_right);
+    wprintw(gwSub[1], " swing left   %2.2f [MPa]\n\n", pi_cmd1->swing_left);
+    wprintw(gwSub[1], " engine rpm   %d [rpm]\n", setting_cmd->engine_rpm);
 
     werase(gwSub[2]);
     wprintw(gwSub[2], "State:\n");
@@ -212,23 +227,23 @@ public:
   WINDOW *gwSub[3], *gwUI;
 
 private:
-  int lever_clamp(int &input)
+  void pilot_pressure_clamp(double &input)
   {
-    if (input > 250)
+    if (input > 0.02*250)
     {
-      input = 250;
+      input = 0.02 * 250;
     }
-    else if (input < -250)
+    else if (input < -0.02 * 250)
     {
-      input = -250;
+      input = -0.02 * 250;
     }
-    return input;
   }
 
   boost::shared_ptr<pilot_pressure_cmd1> pi_cmd1;
   boost::shared_ptr<pilot_pressure_cmd2> pi_cmd2;
   boost::shared_ptr<machine_setting_cmd> setting_cmd;
-  int boom_cmd, arm_cmd, bucket_cmd, swing_cmd, engine_rpm;
+  double boom_pi_cmd, arm_pi_cmd, bucket_pi_cmd, swing_pi_cmd;
+  int engine_rpm;
 };
 
 bool processKey(int com, pilot_pressure_cmd1 &cmd1, pilot_pressure_cmd2 &cmd2, machine_setting_cmd &cmd3);
@@ -260,7 +275,7 @@ int main(int argc, char **argv)
     }
     keynav.update_window();
 
-    usleep(10000);
+    // usleep(10000);
   }
 
   std::cout << "Bye,bye...." << std::endl;

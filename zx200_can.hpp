@@ -5,60 +5,14 @@
 #include <canary/interface_index.hpp>
 #include <canary/raw.hpp>
 
-#define cmd_interval 10
-#define cmd1_interval 10
-#define cmd2_interval 50
+#include <dbcppp/Network.h>
+#include <dbcppp/Network2Functions.h>
+#include <fstream>
 
-struct frame
-{
-  canary::frame_header header;
-  std::array<std::uint8_t, 8> payload;
-};
-
-struct pilot_pressure_cmd1
-{
-  std::uint8_t boom_raise;
-  std::uint8_t boom_lower;
-  std::uint8_t arm_dump;
-  std::uint8_t arm_crowd;
-  std::uint8_t bucket_dump;
-  std::uint8_t bucket_crowd;
-  std::uint8_t swing_left;
-  std::uint8_t swing_right;
-};
-
-struct pilot_pressure_cmd2
-{
-  std::uint8_t track_right_forward;
-  std::uint8_t track_left_forward;
-  std::uint8_t track_right_backward;
-  std::uint8_t track_left_backward;
-  std::uint8_t spare_A;
-  std::uint8_t spare_B;
-  std::uint8_t assist_A;
-  std::uint8_t assist_B;
-};
-
-struct machine_setting_cmd
-{
-  std::uint8_t engine_rpm;
-  std::uint8_t power_eco_mode;
-  std::uint8_t rabbit_turtle_mode;
-  std::uint8_t status_notice;
-  std::uint8_t yellow_lamp_cmd;
-  // byte3-7 is not assigned
-  // std::uint8_t alive_cnt;
-};
+#include "zx200_dbc.hpp"
 
 // receive data from ZX200 to PC
 
-struct front_angle
-{
-  double boom_angle;
-  double arm_angle;
-  double bucket_angle;
-  double swing_angle;
-};
 
 struct front_ang_velocity
 {
@@ -75,33 +29,49 @@ struct roll_pitch_angle
 };
 
 
-class zx200_can
+class zx200_can:zx200_dbc
 {
   public:
-    zx200_can(boost::asio::io_context &io, std::string can_port): send_timer(io, boost::asio::chrono::milliseconds(cmd_interval)),
-    send_timer1(io, boost::asio::chrono::milliseconds(cmd1_interval)),
-    send_timer2(io, boost::asio::chrono::milliseconds(cmd2_interval)),
-    sock(io)
+    zx200_can(boost::asio::io_context &io, std::string can_port)
+        : send_timer(io, boost::asio::chrono::milliseconds(pi_cmd1_interval)),
+          send_timer1(io, boost::asio::chrono::milliseconds(pi_cmd2_interval)),
+          send_timer2(io, boost::asio::chrono::milliseconds(setting_cmd_interval)),
+          sock(io)
     {
       const auto idx = canary::get_interface_index(can_port);
       auto const ep = canary::raw::endpoint{idx};
       sock.open();
       sock.bind(ep);
 
-      pi_cmd1 = boost::shared_ptr<pilot_pressure_cmd1>(new pilot_pressure_cmd1{});
+      // pi_cmd1 = boost::shared_ptr<pilot_pressure_cmd1>(new pilot_pressure_cmd1{});
       pi_cmd2 = boost::shared_ptr<pilot_pressure_cmd2>(new pilot_pressure_cmd2{});
       setting_cmd = boost::shared_ptr<machine_setting_cmd>(new machine_setting_cmd{});
+
+      // create_dbc_map(pi_cmd1);
 
       start_receive();
       send_timer.async_wait(boost::bind(&zx200_can::send_pi_cmd1, this));
       send_timer1.async_wait(boost::bind(&zx200_can::send_pi_cmd2, this));
       send_timer2.async_wait(boost::bind(&zx200_can::send_machine_setting_cmd, this));
     };
-
+    ~zx200_can()
+    {
+      send_timer.cancel();
+      send_timer1.cancel();
+      send_timer2.cancel();
+    }
 
     void set_pilot_pressure_cmd1(pilot_pressure_cmd1 cmd)
     {
-      pi_cmd1 = boost::make_shared<pilot_pressure_cmd1>(cmd);
+      // pi_cmd1.at("boom_up") = cmd.boom_up;
+      // pi_cmd1.at("boom_down") = cmd.boom_down;
+      // pi_cmd1.at("arm_crowd") = cmd.arm_crowd;
+      // pi_cmd1.at("arm_dump") = cmd.arm_dump;
+      // pi_cmd1.at("bucket_crowd") = cmd.bucket_crowd;
+      // pi_cmd1.at("bucket_dump") = cmd.bucket_dump;
+      // pi_cmd1.at("swing_right") = cmd.swing_right;
+      // pi_cmd1.at("swing_left") = cmd.swing_left;
+      pi_cmd1_new = cmd;
     }
     void set_pilot_pressure_cmd2(pilot_pressure_cmd2 cmd)
     {
@@ -109,40 +79,25 @@ class zx200_can
     }
     void set_machine_setting_cmd(machine_setting_cmd cmd)
     {
-      setting_cmd = boost::make_shared<machine_setting_cmd>(cmd);
+      // setting_cmd = boost::make_shared<machine_setting_cmd>(cmd);
+      setting_cmdx.at("engine_rpm") = cmd.engine_rpm;
+      setting_cmdx.at("power_eco_mode") = cmd.power_eco_mode;
+      setting_cmdx.at("travel_speed_mode") = cmd.travel_speed_mode;
+      setting_cmdx.at("working_mode_notice") = cmd.working_mode_notice;
+      setting_cmdx.at("yellow_led_mode") = cmd.yellow_led_mode;
+      setting_cmdx.at("alive_counter") = cmd.alive_counter;
     }
-
-    // void set_pilot_pressure_cmd1a(boost::make_shared<pilot_pressure_cmd1> cmd)
-    // {
-    // }
-    // void set_pilot_pressure_cmd2(pilot_pressure_cmd2 cmd)
-    // {
-    //   pi_cmd2 = boost::make_shared<pilot_pressure_cmd2>(cmd);
-    // }
-    // void set_machine_setting_cmd(machine_setting_cmd cmd)
-    // {
-    //   setting_cmd = boost::make_shared<machine_setting_cmd>(cmd);
-    // }
 
   private:
     void send_pi_cmd1()
     {
-      frame f = {};
-      f.header.id(0x18FF640A);
-      f.header.extended_format(true);
-      f.header.payload_length(8);
-      f.payload[0] = pi_cmd1->boom_raise;
-      f.payload[1] = pi_cmd1->boom_lower;
-      f.payload[2] = pi_cmd1->arm_dump;
-      f.payload[3] = pi_cmd1->arm_crowd;
-      f.payload[4] = pi_cmd1->bucket_dump;
-      f.payload[5] = pi_cmd1->bucket_crowd;
-      f.payload[6] = pi_cmd1->swing_left;
-      f.payload[7] = pi_cmd1->swing_right;
+      frame f;
+      // pi_cmd1_encode(pi_cmd1, f);
+      pi_cmd1_encode(pi_cmd1_new, f);
 
       // sock.send(canary::net::buffer(&f, sizeof(f)));
       sock.async_send(canary::net::buffer(&f, sizeof(f)), boost::bind(&zx200_can::send_handle, this));
-      send_timer.expires_at(send_timer.expiry() + boost::asio::chrono::milliseconds(cmd_interval));
+      send_timer.expires_at(send_timer.expiry() + boost::asio::chrono::milliseconds(pi_cmd1_interval));
       send_timer.async_wait(boost::bind(&zx200_can::send_pi_cmd1, this));
     }
 
@@ -156,14 +111,14 @@ class zx200_can
       f.payload[1] = pi_cmd2->track_left_forward;
       f.payload[2] = pi_cmd2->track_right_backward;
       f.payload[3] = pi_cmd2->track_left_backward;
-      f.payload[4] = pi_cmd2->spare_A;
-      f.payload[5] = pi_cmd2->spare_B;
-      f.payload[6] = pi_cmd2->assist_A;
-      f.payload[7] = pi_cmd2->assist_B;
+      f.payload[4] = pi_cmd2->assist_a;
+      f.payload[5] = pi_cmd2->attachment_b;
+      f.payload[6] = pi_cmd2->assist_a;
+      f.payload[7] = pi_cmd2->assist_b;
 
       // sock.send(canary::net::buffer(&f, sizeof(f)));
       sock.async_send(canary::net::buffer(&f, sizeof(f)), boost::bind(&zx200_can::send_handle, this));
-      send_timer1.expires_at(send_timer1.expiry() + boost::asio::chrono::milliseconds(cmd1_interval));
+      send_timer1.expires_at(send_timer1.expiry() + boost::asio::chrono::milliseconds(pi_cmd2_interval));
       send_timer1.async_wait(boost::bind(&zx200_can::send_pi_cmd2, this));
     }
 
@@ -175,12 +130,12 @@ class zx200_can
       f.header.payload_length(8);
       f.payload[0] = setting_cmd->engine_rpm;
       f.payload[1] = std::uint8_t(
-          setting_cmd->yellow_lamp_cmd << 4 | setting_cmd->status_notice << 3 | setting_cmd->rabbit_turtle_mode << 2 | setting_cmd->power_eco_mode);
+          setting_cmd->yellow_led_mode << 4 | setting_cmd->working_mode_notice << 3 | setting_cmd->travel_speed_mode << 2 | setting_cmd->power_eco_mode);
       f.payload[7] = alive_cnt++;
 
       // sock.send(canary::net::buffer(&f, sizeof(f)));
       sock.async_send(canary::net::buffer(&f, sizeof(f)), boost::bind(&zx200_can::send_handle, this));
-      send_timer2.expires_at(send_timer2.expiry() + boost::asio::chrono::milliseconds(cmd2_interval));
+      send_timer2.expires_at(send_timer2.expiry() + boost::asio::chrono::milliseconds(setting_cmd_interval));
       send_timer2.async_wait(boost::bind(&zx200_can::send_machine_setting_cmd, this));
     }
 
@@ -193,6 +148,8 @@ class zx200_can
       if (recv_f.header.payload_length())
       {
         // wprintw(gwUI, "Received CAN frame, id: %x, len: %ld\n", recv_f.header.id(), recv_f.header.payload_length());
+        //decode here
+        decode(recv_f);
       }
     }
 
@@ -208,10 +165,12 @@ class zx200_can
     boost::asio::steady_timer send_timer, send_timer1, send_timer2;
     canary::raw::socket sock;
     frame recv_f;
-    // pilot_pressure_cmd1 cmd1;
-    boost::shared_ptr<pilot_pressure_cmd1> pi_cmd1;
+    // boost::shared_ptr<pilot_pressure_cmd1> pi_cmd1;
+    pilot_pressure_cmd1 pi_cmd1_new;
     boost::shared_ptr<pilot_pressure_cmd2> pi_cmd2;
     boost::shared_ptr<machine_setting_cmd> setting_cmd;
     std::uint8_t alive_cnt;
+    std::unordered_map<uint64_t, const dbcppp::IMessage *> messages;
+    std::map<std::string, double> pi_cmd1,pi_cmd2x;
+    std::map<std::string, int> setting_cmdx;
 };
-// #endif //ZX200_CAN_HPP
