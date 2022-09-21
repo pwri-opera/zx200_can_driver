@@ -23,9 +23,12 @@ find_package(canary REQUIRED)
 find_package(Boost 1.70
              COMPONENTS
                 system
+                timer
              REQUIRED)
 
 find_package (Threads)
+
+find_package(RTTR CONFIG REQUIRED Core)
 
 # add_executable(zx200_can_keynav zx200_can_keynav.cpp)
 # target_link_libraries(zx200_can_keynav PUBLIC canary::canary curses Boost::system
@@ -35,7 +38,7 @@ add_executable(zx200_keynav zx200_keynav.cpp)
 # set_target_properties(zx200_keynav PROPERTIES LINKER_LANGUAGE CXX)
 # set_property(TARGET zx200_keynav PROPERTY CXX_STANDARD 17)
 target_link_libraries(zx200_keynav PUBLIC canary::canary curses Boost::system
-        Threads::Threads boost_thread boost_coroutine dbcppp)
+        Threads::Threads boost_thread boost_coroutine boost_timer dbcppp RTTR::Core)
 
 
 
