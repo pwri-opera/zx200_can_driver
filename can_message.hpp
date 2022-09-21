@@ -22,6 +22,10 @@ struct Machine_State
   bool pilot_shutoff_valve_state;
   std::uint8_t unlock_cmd_state;
   bool lock_cmd_state;
+  const std::uint64_t id = 2566882536;
+  const std::uint64_t cycle_time = 50;
+  std::uint64_t Id() { return id; }
+  std::uint64_t Cycle_time() { return cycle_time; }
   RTTR_ENABLE()
 };
 struct Hydraulic_Flow_Rate_2
@@ -30,6 +34,10 @@ struct Hydraulic_Flow_Rate_2
   std::int32_t left_track_motor_a_flow_rate;
   std::int32_t right_track_motor_b_flow_rate;
   std::int32_t right_track_motor_a_flow_rate;
+  const std::uint64_t id = 2566881512;
+  const std::uint64_t cycle_time = 20;
+  std::uint64_t Id() { return id; }
+  std::uint64_t Cycle_time() { return cycle_time; }
   RTTR_ENABLE()
 };
 struct Hydraulic_Flow_Rate_1
@@ -42,6 +50,10 @@ struct Hydraulic_Flow_Rate_1
   std::int32_t arm_cylinder_bottom_flow_rate;
   std::int32_t boom_cylinder_rod_flow_rate;
   std::int32_t boom_cylinder_bottom_flow_rate;
+  const std::uint64_t id = 2566881256;
+  const std::uint64_t cycle_time = 20;
+  std::uint64_t Id() { return id; }
+  std::uint64_t Cycle_time() { return cycle_time; }
   RTTR_ENABLE()
 };
 struct Pilot_Pressure_2
@@ -54,6 +66,10 @@ struct Pilot_Pressure_2
   double left_track_forward_pilot_prs;
   double right_track_backward_pilot_prs;
   double right_track_forward_pilot_prs;
+  const std::uint64_t id = 2566880488;
+  const std::uint64_t cycle_time = 10;
+  std::uint64_t Id() { return id; }
+  std::uint64_t Cycle_time() { return cycle_time; }
   RTTR_ENABLE()
 };
 struct Pilot_Pressure_1
@@ -66,6 +82,10 @@ struct Pilot_Pressure_1
   double arm_crowd_pilot_pressure;
   double boom_down_pilot_pressure;
   double boom_up_pilot_pressure;
+  const std::uint64_t id = 2566880232;
+  const std::uint64_t cycle_time = 10;
+  std::uint64_t Id() { return id; }
+  std::uint64_t Cycle_time() { return cycle_time; }
   RTTR_ENABLE()
 };
 struct Pressure_2
@@ -78,6 +98,10 @@ struct Pressure_2
   double left_track_motor_a_pressure;
   double right_track_motor_b_pressure;
   double right_track_motor_a_pressure;
+  const std::uint64_t id = 2566879976;
+  const std::uint64_t cycle_time = 10;
+  std::uint64_t Id() { return id; }
+  std::uint64_t Cycle_time() { return cycle_time; }
   RTTR_ENABLE()
 };
 struct Pressure_1
@@ -90,27 +114,47 @@ struct Pressure_1
   double arm_cylinder_bottom_pressure;
   double boom_cylinder_rod_pressure;
   double boom_cylinder_bottom_pressure;
+  const std::uint64_t id = 2566879720;
+  const std::uint64_t cycle_time = 10;
+  std::uint64_t Id() { return id; }
+  std::uint64_t Cycle_time() { return cycle_time; }
   RTTR_ENABLE()
 };
 struct Vehicle_Azimuth
 {
   double track_body_azimuth;
   double upper_body_azimuth;
+  const std::uint64_t id = 2566887144;
+  const std::uint64_t cycle_time = 100;
+  std::uint64_t Id() { return id; }
+  std::uint64_t Cycle_time() { return cycle_time; }
   RTTR_ENABLE()
 };
 struct Swing_Center_Position_3
 {
   double swing_center_position_z;
+  const std::uint64_t id = 2566884840;
+  const std::uint64_t cycle_time = 100;
+  std::uint64_t Id() { return id; }
+  std::uint64_t Cycle_time() { return cycle_time; }
   RTTR_ENABLE()
 };
 struct Swing_Center_Position_2
 {
   double swing_center_position_y;
+  const std::uint64_t id = 2566884584;
+  const std::uint64_t cycle_time = 100;
+  std::uint64_t Id() { return id; }
+  std::uint64_t Cycle_time() { return cycle_time; }
   RTTR_ENABLE()
 };
 struct Swing_Center_Position_1
 {
   double swing_center_position_x;
+  const std::uint64_t id = 2566882792;
+  const std::uint64_t cycle_time = 100;
+  std::uint64_t Id() { return id; }
+  std::uint64_t Cycle_time() { return cycle_time; }
   RTTR_ENABLE()
 };
 struct Front_Pin_Position_3
@@ -118,6 +162,10 @@ struct Front_Pin_Position_3
   double bucket_pin_position_z;
   double bucket_pin_position_y;
   double bucket_pin_position_x;
+  const std::uint64_t id = 2566882280;
+  const std::uint64_t cycle_time = 50;
+  std::uint64_t Id() { return id; }
+  std::uint64_t Cycle_time() { return cycle_time; }
   RTTR_ENABLE()
 };
 struct Front_Pin_Position_2
@@ -125,6 +173,10 @@ struct Front_Pin_Position_2
   double arm_pin_position_z;
   double arm_pin_position_y;
   double arm_pin_position_x;
+  const std::uint64_t id = 2566882024;
+  const std::uint64_t cycle_time = 50;
+  std::uint64_t Id() { return id; }
+  std::uint64_t Cycle_time() { return cycle_time; }
   RTTR_ENABLE()
 };
 struct Front_Pin_Position_1
@@ -132,12 +184,20 @@ struct Front_Pin_Position_1
   double boom_pin_position_z;
   double boom_pin_position_y;
   double boom_pin_position_x;
+  const std::uint64_t id = 2566881768;
+  const std::uint64_t cycle_time = 50;
+  std::uint64_t Id() { return id; }
+  std::uint64_t Cycle_time() { return cycle_time; }
   RTTR_ENABLE()
 };
 struct Roll_Pitch_Angle
 {
   double pitch_angle;
   double roll_angle;
+  const std::uint64_t id = 2566881000;
+  const std::uint64_t cycle_time = 20;
+  std::uint64_t Id() { return id; }
+  std::uint64_t Cycle_time() { return cycle_time; }
   RTTR_ENABLE()
 };
 struct Front_Angular_Velocity
@@ -146,6 +206,10 @@ struct Front_Angular_Velocity
   double bucket_relative_angular_velocity;
   double arm_relative_angular_velocity;
   double boom_relative_angular_velocity;
+  const std::uint64_t id = 2566879464;
+  const std::uint64_t cycle_time = 10;
+  std::uint64_t Id() { return id; }
+  std::uint64_t Cycle_time() { return cycle_time; }
   RTTR_ENABLE()
 };
 struct Front_Angle
@@ -154,6 +218,10 @@ struct Front_Angle
   double swing_relative_angle;
   double arm_relative_angle;
   double boom_relative_angle;
+  const std::uint64_t id = 2566880744;
+  const std::uint64_t cycle_time = 10;
+  std::uint64_t Id() { return id; }
+  std::uint64_t Cycle_time() { return cycle_time; }
   RTTR_ENABLE()
 };
 struct Machine_Setting_Cmd
@@ -364,6 +432,8 @@ RTTR_REGISTRATION
 
   rttr::registration::class_<Pilot_Pressure_Cmd_1>("Pilot_Pressure_Cmd_1")
       .constructor<>()
+      // .property("Pilot_Pressure_Cmd_1::id", &Pilot_Pressure_Cmd_1::id)
+      // .property("Pilot_Pressure_Cmd_1::cycle_time", &Pilot_Pressure_Cmd_1::cycle_time)
       .property("Pilot_Pressure_Cmd_1::swing_right", &Pilot_Pressure_Cmd_1::swing_right)
       .property("Pilot_Pressure_Cmd_1::swing_left", &Pilot_Pressure_Cmd_1::swing_left)
       .property("Pilot_Pressure_Cmd_1::bucket_dump", &Pilot_Pressure_Cmd_1::bucket_dump)
