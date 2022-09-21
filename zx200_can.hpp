@@ -30,8 +30,7 @@ class zx200_can:zx200_dbc
       pi_cmd2 = boost::shared_ptr<Pilot_Pressure_Cmd_2>(new Pilot_Pressure_Cmd_2{});
       setting_cmd = boost::shared_ptr<Machine_Setting_Cmd>(new Machine_Setting_Cmd{});
 
-      // create_dbc_map(pi_cmd1);
-
+      alive_cnt = 0;
       start_receive();
       send_timer.async_wait(boost::bind(&zx200_can::send_pi_cmd1, this));
       send_timer1.async_wait(boost::bind(&zx200_can::send_pi_cmd2, this));
@@ -83,7 +82,7 @@ class zx200_can:zx200_dbc
     void send_machine_setting_cmd()
     {
       frame f;
-      setting_cmd->alive_counter++;
+      setting_cmd->alive_counter = alive_cnt++;
       encode(*setting_cmd, f);
 
       // sock.send(canary::net::buffer(&f, sizeof(f)));
