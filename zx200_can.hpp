@@ -8,38 +8,17 @@
 #include <dbcppp/Network.h>
 #include <dbcppp/Network2Functions.h>
 #include <fstream>
-
 #include "zx200_dbc.hpp"
 
-// receive data from ZX200 to PC
-#include <boost/timer/timer.hpp>
-
-#define pi_cmd1_interval 10
-#define pi_cmd2_interval 10
-#define setting_cmd_interval 50
-
-struct front_ang_velocity
-{
-  double boom_ang_velocity;
-  double arm_ang_velocity;
-  double bucket_ang_velocity;
-  double swing_ang_velocity;
-};
-
-struct roll_pitch_angle
-{
-  double roll_angle;
-  double pitch_angle;
-};
-
+#define initial_interval 10
 
 class zx200_can:zx200_dbc
 {
   public:
     zx200_can(boost::asio::io_context &io, std::string can_port)
-        : send_timer(io, boost::asio::chrono::milliseconds(pi_cmd1_interval)),
-          send_timer1(io, boost::asio::chrono::milliseconds(pi_cmd2_interval)),
-          send_timer2(io, boost::asio::chrono::milliseconds(setting_cmd_interval)),
+        : send_timer(io, boost::asio::chrono::milliseconds(initial_interval)),
+          send_timer1(io, boost::asio::chrono::milliseconds(initial_interval)),
+          send_timer2(io, boost::asio::chrono::milliseconds(initial_interval)),
           sock(io)
     {
       const auto idx = canary::get_interface_index(can_port);
@@ -82,22 +61,22 @@ class zx200_can:zx200_dbc
     void send_pi_cmd1()
     {
       frame f;
-      encode(2566874122,*pi_cmd1,f);
+      encode(*pi_cmd1,f);
 
       // sock.send(canary::net::buffer(&f, sizeof(f)));
       sock.async_send(canary::net::buffer(&f, sizeof(f)), boost::bind(&zx200_can::send_handle, this));
-      send_timer.expires_at(send_timer.expiry() + boost::asio::chrono::milliseconds(pi_cmd1_interval));
+      send_timer.expires_at(send_timer.expiry() + boost::asio::chrono::milliseconds(pi_cmd1->Cycle_time()));
       send_timer.async_wait(boost::bind(&zx200_can::send_pi_cmd1, this));
     }
 
     void send_pi_cmd2()
     {
       frame f;
-      encode(2566874378, *pi_cmd2, f);
+      encode(*pi_cmd2, f);
 
       // sock.send(canary::net::buffer(&f, sizeof(f)));
       sock.async_send(canary::net::buffer(&f, sizeof(f)), boost::bind(&zx200_can::send_handle, this));
-      send_timer1.expires_at(send_timer1.expiry() + boost::asio::chrono::milliseconds(pi_cmd2_interval));
+      send_timer1.expires_at(send_timer1.expiry() + boost::asio::chrono::milliseconds(pi_cmd2->Cycle_time()));
       send_timer1.async_wait(boost::bind(&zx200_can::send_pi_cmd2, this));
     }
 
@@ -105,11 +84,11 @@ class zx200_can:zx200_dbc
     {
       frame f;
       setting_cmd->alive_counter++;
-      encode(2566874634, *setting_cmd, f);
+      encode(*setting_cmd, f);
 
       // sock.send(canary::net::buffer(&f, sizeof(f)));
       sock.async_send(canary::net::buffer(&f, sizeof(f)), boost::bind(&zx200_can::send_handle, this));
-      send_timer2.expires_at(send_timer2.expiry() + boost::asio::chrono::milliseconds(setting_cmd_interval));
+      send_timer2.expires_at(send_timer2.expiry() + boost::asio::chrono::milliseconds(setting_cmd->Cycle_time()));
       send_timer2.async_wait(boost::bind(&zx200_can::send_machine_setting_cmd, this));
     }
 

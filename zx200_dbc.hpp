@@ -54,9 +54,9 @@ public:
     }
   }
 
-  void encode(const std::uint64_t id, auto cmd, frame &f)
+  void encode(auto cmd, frame &f)
   {
-    auto iter = messages.find(id);
+    auto iter = messages.find(cmd.Id());
     if (iter != messages.end())
     {
       const dbcppp::IMessage *msg = iter->second;

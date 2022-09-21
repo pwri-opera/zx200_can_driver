@@ -164,6 +164,10 @@ struct Machine_Setting_Cmd
   bool power_eco_mode;
   std::uint8_t alive_counter;
   std::int16_t engine_rpm;
+  std::uint64_t Id() { return id; }
+  std::uint64_t Cycle_time() { return cycle_time;}
+  const std::uint64_t id = 2566874634;
+  const std::uint64_t cycle_time = 50;
   RTTR_ENABLE()
 };
 struct Pilot_Pressure_Cmd_2
@@ -176,6 +180,10 @@ struct Pilot_Pressure_Cmd_2
   double right_track_backward;
   double left_track_forward;
   double right_track_forward;
+  std::uint64_t Id() { return id; }
+  std::uint64_t Cycle_time() { return cycle_time; }
+  const std::uint64_t id = 2566874378;
+  const std::uint64_t cycle_time = 10;
   RTTR_ENABLE()
 };
 struct Pilot_Pressure_Cmd_1
@@ -188,6 +196,10 @@ struct Pilot_Pressure_Cmd_1
   double arm_crowd;
   double boom_down;
   double boom_up;
+  std::uint64_t Id() { return id; }
+  std::uint64_t Cycle_time() { return cycle_time;}
+  const std::uint64_t id = 2566874122;
+  const std::uint64_t cycle_time = 10;
   RTTR_ENABLE()
 };
 struct Can_Bus : Machine_State, Hydraulic_Flow_Rate_2, Hydraulic_Flow_Rate_1, Pilot_Pressure_2, Pilot_Pressure_1, Pressure_2, Pressure_1, Vehicle_Azimuth, Swing_Center_Position_3, Swing_Center_Position_2, Swing_Center_Position_1, Front_Pin_Position_3, Front_Pin_Position_2, Front_Pin_Position_1, Roll_Pitch_Angle, Front_Angular_Velocity, Front_Angle, Machine_Setting_Cmd, Pilot_Pressure_Cmd_2, Pilot_Pressure_Cmd_1
