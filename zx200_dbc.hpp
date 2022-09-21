@@ -44,14 +44,11 @@ public:
         if (sig.MultiplexerIndicator() != dbcppp::ISignal::EMultiplexer::MuxValue ||
             (mux_sig && mux_sig->Decode(&f.payload) == sig.MultiplexerSwitchValue()))
         {
-          if (msg->Name()=="Front_Angle")
-          {
-            std::string name = msg->Name() + "::" + sig.Name();
-            rttr::property prop = rttr::type::get(*can_bus).get_property(name);
-            if(!prop)
-              std::cout << "error: " << name << std::endl;
-            prop.set_value(*can_bus, sig.RawToPhys(sig.Decode(&f.payload[0])));
-          }
+          std::string name = msg->Name() + "::" + sig.Name();
+          rttr::property prop = rttr::type::get(*can_bus).get_property(name);
+          if(!prop)
+            std::cout << "error: " << name << std::endl;
+          prop.set_value(*can_bus, sig.RawToPhys(sig.Decode(&f.payload[0])));
         }
       }
     }
@@ -80,7 +77,8 @@ public:
   {
   }
 
-  private : std::unordered_map<uint64_t, const dbcppp::IMessage *> messages;
+private:
+  std::unordered_map<uint64_t, const dbcppp::IMessage *> messages;
   std::unique_ptr<dbcppp::INetwork> net;
   std::shared_ptr<Can_Bus> can_bus;
 };
