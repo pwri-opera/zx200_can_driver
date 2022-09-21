@@ -18,8 +18,6 @@
 #define cmd1_interval 10
 #define cmd2_interval 50
 
-
-
 class zx200_keynav : public zx200_can
 {
   // using zx200_can::zx200_can;
@@ -33,6 +31,7 @@ public:
     setting_cmd = boost::shared_ptr<machine_setting_cmd>(new machine_setting_cmd { 900,0,0,0,0});
     boom_pi_cmd = arm_pi_cmd = bucket_pi_cmd = swing_pi_cmd = 0;
     engine_rpm = 900;
+
 
     // for (const dbcppp::ISignal &sig : pi_cmd1_msg->Signals())
     // {
@@ -133,6 +132,22 @@ public:
     case '-':
       engine_rpm -= 100;
       break;
+    case 'n': // switch working_mode_notice to teleoperation
+      setting_cmd->working_mode_notice = false;
+      break;
+    case 'm': // switch working_mode_notice to automation
+      setting_cmd->working_mode_notice = true;
+      break;
+
+    case ','://switch yellow led to off
+      setting_cmd->yellow_led_mode = 0x0;
+      break;
+    case '.': //switch yellow led to blinking
+      setting_cmd->yellow_led_mode = 0x1;
+      break;
+    case '/': //switch  yellow led to steady light
+      setting_cmd->yellow_led_mode = 0x2;
+      break;
     case ' ':
       arm_pi_cmd = bucket_pi_cmd = swing_pi_cmd = 0;
       boom_pi_cmd = 0;
@@ -194,6 +209,7 @@ public:
       setting_cmd->engine_rpm = 0;
       engine_rpm = 0;
     }
+
     set_pilot_pressure_cmd1(*pi_cmd1);
     set_pilot_pressure_cmd2(*pi_cmd2);
     set_machine_setting_cmd(*setting_cmd);
@@ -274,7 +290,6 @@ int main(int argc, char **argv)
       doit = keynav.update_command(com);
     }
     keynav.update_window();
-
     // usleep(10000);
   }
 

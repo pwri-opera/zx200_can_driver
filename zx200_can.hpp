@@ -12,7 +12,11 @@
 #include "zx200_dbc.hpp"
 
 // receive data from ZX200 to PC
+#include <boost/timer/timer.hpp>
 
+#define pi_cmd1_interval 10
+#define pi_cmd2_interval 10
+#define setting_cmd_interval 50
 
 struct front_ang_velocity
 {
@@ -43,7 +47,7 @@ class zx200_can:zx200_dbc
       sock.open();
       sock.bind(ep);
 
-      // pi_cmd1 = boost::shared_ptr<pilot_pressure_cmd1>(new pilot_pressure_cmd1{});
+      pi_cmd1 = boost::shared_ptr<pilot_pressure_cmd1>(new pilot_pressure_cmd1{});
       pi_cmd2 = boost::shared_ptr<pilot_pressure_cmd2>(new pilot_pressure_cmd2{});
       setting_cmd = boost::shared_ptr<machine_setting_cmd>(new machine_setting_cmd{});
 
@@ -63,15 +67,7 @@ class zx200_can:zx200_dbc
 
     void set_pilot_pressure_cmd1(pilot_pressure_cmd1 cmd)
     {
-      // pi_cmd1.at("boom_up") = cmd.boom_up;
-      // pi_cmd1.at("boom_down") = cmd.boom_down;
-      // pi_cmd1.at("arm_crowd") = cmd.arm_crowd;
-      // pi_cmd1.at("arm_dump") = cmd.arm_dump;
-      // pi_cmd1.at("bucket_crowd") = cmd.bucket_crowd;
-      // pi_cmd1.at("bucket_dump") = cmd.bucket_dump;
-      // pi_cmd1.at("swing_right") = cmd.swing_right;
-      // pi_cmd1.at("swing_left") = cmd.swing_left;
-      pi_cmd1_new = cmd;
+      pi_cmd1 = boost::make_shared<pilot_pressure_cmd1>(cmd);
     }
     void set_pilot_pressure_cmd2(pilot_pressure_cmd2 cmd)
     {
@@ -79,21 +75,14 @@ class zx200_can:zx200_dbc
     }
     void set_machine_setting_cmd(machine_setting_cmd cmd)
     {
-      // setting_cmd = boost::make_shared<machine_setting_cmd>(cmd);
-      setting_cmdx.at("engine_rpm") = cmd.engine_rpm;
-      setting_cmdx.at("power_eco_mode") = cmd.power_eco_mode;
-      setting_cmdx.at("travel_speed_mode") = cmd.travel_speed_mode;
-      setting_cmdx.at("working_mode_notice") = cmd.working_mode_notice;
-      setting_cmdx.at("yellow_led_mode") = cmd.yellow_led_mode;
-      setting_cmdx.at("alive_counter") = cmd.alive_counter;
+      setting_cmd = boost::make_shared<machine_setting_cmd>(cmd);
     }
 
   private:
     void send_pi_cmd1()
     {
       frame f;
-      // pi_cmd1_encode(pi_cmd1, f);
-      pi_cmd1_encode(pi_cmd1_new, f);
+      encode(2566874122,*pi_cmd1,f);
 
       // sock.send(canary::net::buffer(&f, sizeof(f)));
       sock.async_send(canary::net::buffer(&f, sizeof(f)), boost::bind(&zx200_can::send_handle, this));
@@ -103,18 +92,8 @@ class zx200_can:zx200_dbc
 
     void send_pi_cmd2()
     {
-      frame f = {};
-      f.header.id(0x18FF650A);
-      f.header.extended_format(true);
-      f.header.payload_length(8);
-      f.payload[0] = pi_cmd2->track_right_forward;
-      f.payload[1] = pi_cmd2->track_left_forward;
-      f.payload[2] = pi_cmd2->track_right_backward;
-      f.payload[3] = pi_cmd2->track_left_backward;
-      f.payload[4] = pi_cmd2->assist_a;
-      f.payload[5] = pi_cmd2->attachment_b;
-      f.payload[6] = pi_cmd2->assist_a;
-      f.payload[7] = pi_cmd2->assist_b;
+      frame f;
+      encode(2566874378, *pi_cmd2, f);
 
       // sock.send(canary::net::buffer(&f, sizeof(f)));
       sock.async_send(canary::net::buffer(&f, sizeof(f)), boost::bind(&zx200_can::send_handle, this));
@@ -124,14 +103,9 @@ class zx200_can:zx200_dbc
 
     void send_machine_setting_cmd()
     {
-      frame f = {};
-      f.header.id(0x18FF660A);
-      f.header.extended_format(true);
-      f.header.payload_length(8);
-      f.payload[0] = setting_cmd->engine_rpm;
-      f.payload[1] = std::uint8_t(
-          setting_cmd->yellow_led_mode << 4 | setting_cmd->working_mode_notice << 3 | setting_cmd->travel_speed_mode << 2 | setting_cmd->power_eco_mode);
-      f.payload[7] = alive_cnt++;
+      frame f;
+      setting_cmd->alive_counter++;
+      encode(2566874634, *setting_cmd, f);
 
       // sock.send(canary::net::buffer(&f, sizeof(f)));
       sock.async_send(canary::net::buffer(&f, sizeof(f)), boost::bind(&zx200_can::send_handle, this));
@@ -165,12 +139,9 @@ class zx200_can:zx200_dbc
     boost::asio::steady_timer send_timer, send_timer1, send_timer2;
     canary::raw::socket sock;
     frame recv_f;
-    // boost::shared_ptr<pilot_pressure_cmd1> pi_cmd1;
-    pilot_pressure_cmd1 pi_cmd1_new;
+    boost::shared_ptr<pilot_pressure_cmd1> pi_cmd1;
     boost::shared_ptr<pilot_pressure_cmd2> pi_cmd2;
     boost::shared_ptr<machine_setting_cmd> setting_cmd;
     std::uint8_t alive_cnt;
     std::unordered_map<uint64_t, const dbcppp::IMessage *> messages;
-    std::map<std::string, double> pi_cmd1,pi_cmd2x;
-    std::map<std::string, int> setting_cmdx;
 };
