@@ -67,7 +67,8 @@ public:
 
       for (const dbcppp::ISignal &sig : msg->Signals())
       {
-        rttr::property prop = rttr::type::get(cmd).get_property(sig.Name());
+        std::string name = msg->Name() + "::" + sig.Name();
+        rttr::property prop = rttr::type::get(cmd).get_property(name);
         sig.Encode(sig.PhysToRaw((prop.get_value(cmd)).to_double()), &f.payload[0]);
       }
     }
