@@ -14,10 +14,6 @@
 
 #include "zx200_dbc.hpp"
 
-#define cmd_interval 10
-#define cmd1_interval 10
-#define cmd2_interval 50
-
 class zx200_keynav : public zx200_can
 {
 public:
