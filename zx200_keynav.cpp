@@ -20,23 +20,16 @@
 
 class zx200_keynav : public zx200_can
 {
-  // using zx200_can::zx200_can;
-
 public:
   zx200_keynav(boost::asio::io_context &io, std::string can_port) : zx200_can(io, can_port)
   {
     // gwUI = ui;
-    pi_cmd1 = boost::shared_ptr<pilot_pressure_cmd1>(new pilot_pressure_cmd1{});
-    pi_cmd2 = boost::shared_ptr<pilot_pressure_cmd2>(new pilot_pressure_cmd2{});
-    setting_cmd = boost::shared_ptr<machine_setting_cmd>(new machine_setting_cmd { 900,0,0,0,0});
+    pi_cmd1 = boost::shared_ptr<Pilot_Pressure_Cmd_1>(new Pilot_Pressure_Cmd_1{});
+    pi_cmd2 = boost::shared_ptr<Pilot_Pressure_Cmd_2>(new Pilot_Pressure_Cmd_2{});
+    setting_cmd = boost::shared_ptr<Machine_Setting_Cmd>(new Machine_Setting_Cmd {});
     boom_pi_cmd = arm_pi_cmd = bucket_pi_cmd = swing_pi_cmd = 0;
-    engine_rpm = 900;
+    setting_cmd->engine_rpm = engine_rpm = 900;
 
-
-    // for (const dbcppp::ISignal &sig : pi_cmd1_msg->Signals())
-    // {
-
-    // }
     int iport;
     int i;
     int status;
@@ -255,14 +248,13 @@ private:
     }
   }
 
-  boost::shared_ptr<pilot_pressure_cmd1> pi_cmd1;
-  boost::shared_ptr<pilot_pressure_cmd2> pi_cmd2;
-  boost::shared_ptr<machine_setting_cmd> setting_cmd;
+  boost::shared_ptr<Pilot_Pressure_Cmd_1> pi_cmd1;
+  boost::shared_ptr<Pilot_Pressure_Cmd_2> pi_cmd2;
+  boost::shared_ptr<Machine_Setting_Cmd> setting_cmd;
   double boom_pi_cmd, arm_pi_cmd, bucket_pi_cmd, swing_pi_cmd;
   int engine_rpm;
 };
 
-bool processKey(int com, pilot_pressure_cmd1 &cmd1, pilot_pressure_cmd2 &cmd2, machine_setting_cmd &cmd3);
 
 int main(int argc, char **argv)
 {
@@ -285,10 +277,7 @@ int main(int argc, char **argv)
   while (doit)
   {
     char com = wgetch(keynav.gwUI);
-    if (com != ERR)
-    {
-      doit = keynav.update_command(com);
-    }
+    doit = keynav.update_command(com);
     keynav.update_window();
     // usleep(10000);
   }

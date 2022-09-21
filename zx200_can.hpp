@@ -47,9 +47,9 @@ class zx200_can:zx200_dbc
       sock.open();
       sock.bind(ep);
 
-      pi_cmd1 = boost::shared_ptr<pilot_pressure_cmd1>(new pilot_pressure_cmd1{});
-      pi_cmd2 = boost::shared_ptr<pilot_pressure_cmd2>(new pilot_pressure_cmd2{});
-      setting_cmd = boost::shared_ptr<machine_setting_cmd>(new machine_setting_cmd{});
+      pi_cmd1 = boost::shared_ptr<Pilot_Pressure_Cmd_1>(new Pilot_Pressure_Cmd_1{});
+      pi_cmd2 = boost::shared_ptr<Pilot_Pressure_Cmd_2>(new Pilot_Pressure_Cmd_2{});
+      setting_cmd = boost::shared_ptr<Machine_Setting_Cmd>(new Machine_Setting_Cmd{});
 
       // create_dbc_map(pi_cmd1);
 
@@ -65,17 +65,17 @@ class zx200_can:zx200_dbc
       send_timer2.cancel();
     }
 
-    void set_pilot_pressure_cmd1(pilot_pressure_cmd1 cmd)
+    void set_pilot_pressure_cmd1(Pilot_Pressure_Cmd_1 cmd)
     {
-      pi_cmd1 = boost::make_shared<pilot_pressure_cmd1>(cmd);
+      pi_cmd1 = boost::make_shared<Pilot_Pressure_Cmd_1>(cmd);
     }
-    void set_pilot_pressure_cmd2(pilot_pressure_cmd2 cmd)
+    void set_pilot_pressure_cmd2(Pilot_Pressure_Cmd_2 cmd)
     {
-      pi_cmd2 = boost::make_shared<pilot_pressure_cmd2>(cmd);
+      pi_cmd2 = boost::make_shared<Pilot_Pressure_Cmd_2>(cmd);
     }
-    void set_machine_setting_cmd(machine_setting_cmd cmd)
+    void set_machine_setting_cmd(Machine_Setting_Cmd cmd)
     {
-      setting_cmd = boost::make_shared<machine_setting_cmd>(cmd);
+      setting_cmd = boost::make_shared<Machine_Setting_Cmd>(cmd);
     }
 
   private:
@@ -139,9 +139,9 @@ class zx200_can:zx200_dbc
     boost::asio::steady_timer send_timer, send_timer1, send_timer2;
     canary::raw::socket sock;
     frame recv_f;
-    boost::shared_ptr<pilot_pressure_cmd1> pi_cmd1;
-    boost::shared_ptr<pilot_pressure_cmd2> pi_cmd2;
-    boost::shared_ptr<machine_setting_cmd> setting_cmd;
+    boost::shared_ptr<Pilot_Pressure_Cmd_1> pi_cmd1;
+    boost::shared_ptr<Pilot_Pressure_Cmd_2> pi_cmd2;
+    boost::shared_ptr<Machine_Setting_Cmd> setting_cmd;
     std::uint8_t alive_cnt;
     std::unordered_map<uint64_t, const dbcppp::IMessage *> messages;
 };
