@@ -121,6 +121,18 @@ public:
     case '-':
       engine_rpm -= 100;
       break;
+    case 'x': // eco mode
+      setting_cmd->power_eco_mode = 0x0;
+      break;
+    case 'c': // power mode
+      setting_cmd->power_eco_mode = 0x1;
+      break;
+    case 'v': // rabbit mode
+      setting_cmd->travel_speed_mode = 0x0;
+      break;
+    case 'b': // turtle mode
+      setting_cmd->travel_speed_mode = 0x1;
+      break;
     case 'n': // switch working_mode_notice to teleoperation
       setting_cmd->working_mode_notice = false;
       break;
