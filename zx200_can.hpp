@@ -12,11 +12,12 @@
 
 #define initial_interval 10
 
-class zx200_can:zx200_dbc
+class zx200_can : public zx200_dbc
 {
   public:
-    zx200_can(boost::asio::io_context &io, std::string can_port)
-        : send_timer(io, boost::asio::chrono::milliseconds(initial_interval)),
+    zx200_can(boost::asio::io_context &io, std::string can_port, std::string dbc_path)
+        : zx200_dbc(dbc_path),
+          send_timer(io, boost::asio::chrono::milliseconds(initial_interval)),
           send_timer1(io, boost::asio::chrono::milliseconds(initial_interval)),
           send_timer2(io, boost::asio::chrono::milliseconds(initial_interval)),
           sock(io)

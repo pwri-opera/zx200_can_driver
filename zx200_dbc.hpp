@@ -20,9 +20,9 @@ struct frame
 class zx200_dbc
 {
 public:
-  zx200_dbc()
+  zx200_dbc(std::string dbc_path)
   {
-    std::ifstream idbc("/home/genki/zx200.dbc");
+    std::ifstream idbc(dbc_path);
     net = dbcppp::INetwork::LoadDBCFromIs(idbc);
 
     for (const dbcppp::IMessage &msg : net->Messages())

@@ -17,7 +17,7 @@
 class zx200_keynav : public zx200_can
 {
 public:
-  zx200_keynav(boost::asio::io_context &io, std::string can_port) : zx200_can(io, can_port)
+  zx200_keynav(boost::asio::io_context &io, std::string can_port, std::string dbc_path) : zx200_can(io, can_port, dbc_path)
   {
     // gwUI = ui;
     pi_cmd1 = boost::shared_ptr<Pilot_Pressure_Cmd_1>(new Pilot_Pressure_Cmd_1{});
@@ -269,14 +269,14 @@ int main(int argc, char **argv)
   if (argc != 3)
   {
     std::cerr << "Error\n"
-              << "Usage: " << argv[0] << " [can port] [baudrate]" << std::endl;
+              << "Usage: " << argv[0] << " [can_port] [dbc_path]" << std::endl;
     return -1;
   }
   std::string can_port(argv[1]);
-  int baudrate=std::__cxx11::stoi(argv[2]);
-  
+  std::string dbc_path(argv[2]);
+
   canary::net::io_context ioc;
-  zx200_keynav keynav(ioc, can_port);
+  zx200_keynav keynav(ioc, can_port, dbc_path);
 
   boost::thread t(boost::bind(&boost::asio::io_context::run, &ioc));
 
