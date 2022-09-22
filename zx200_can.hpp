@@ -61,7 +61,7 @@ class zx200_can : public zx200_dbc
     void send_pi_cmd1()
     {
       frame f;
-      encode(*pi_cmd1,f);
+      zx200_dbc::encode(*pi_cmd1, f);
 
       // sock.send(canary::net::buffer(&f, sizeof(f)));
       sock.async_send(canary::net::buffer(&f, sizeof(f)), boost::bind(&zx200_can::send_handle, this));
@@ -72,7 +72,7 @@ class zx200_can : public zx200_dbc
     void send_pi_cmd2()
     {
       frame f;
-      encode(*pi_cmd2, f);
+      zx200_dbc::encode(*pi_cmd2, f);
 
       // sock.send(canary::net::buffer(&f, sizeof(f)));
       sock.async_send(canary::net::buffer(&f, sizeof(f)), boost::bind(&zx200_can::send_handle, this));
@@ -84,7 +84,7 @@ class zx200_can : public zx200_dbc
     {
       frame f;
       setting_cmd->alive_counter = alive_cnt++;
-      encode(*setting_cmd, f);
+      zx200_dbc::encode(*setting_cmd, f);
 
       // sock.send(canary::net::buffer(&f, sizeof(f)));
       sock.async_send(canary::net::buffer(&f, sizeof(f)), boost::bind(&zx200_can::send_handle, this));
@@ -100,9 +100,7 @@ class zx200_can : public zx200_dbc
 
       if (recv_f.header.payload_length())
       {
-        // wprintw(gwUI, "Received CAN frame, id: %x, len: %ld\n", recv_f.header.id(), recv_f.header.payload_length());
-        //decode here
-        decode(recv_f);
+        zx200_dbc::decode(recv_f);
       }
     }
 
@@ -122,5 +120,4 @@ class zx200_can : public zx200_dbc
     boost::shared_ptr<Pilot_Pressure_Cmd_2> pi_cmd2;
     boost::shared_ptr<Machine_Setting_Cmd> setting_cmd;
     std::uint8_t alive_cnt;
-    std::unordered_map<uint64_t, const dbcppp::IMessage *> messages;
 };
