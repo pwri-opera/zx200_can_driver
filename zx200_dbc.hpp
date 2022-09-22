@@ -29,7 +29,7 @@ public:
     {
       messages.insert(std::make_pair(msg.Id(), &msg));
     }
-    can_bus = std::make_shared<Can_Bus>();
+    can_bus = std::make_shared<zx200::Can_Bus>();
   }
 
   void decode(frame f){
@@ -104,5 +104,5 @@ public:
 private:
   std::unordered_map<uint64_t, const dbcppp::IMessage *> messages;
   std::unique_ptr<dbcppp::INetwork> net;
-  std::shared_ptr<Can_Bus> can_bus;
+  std::shared_ptr<zx200::Can_Bus> can_bus;
 };

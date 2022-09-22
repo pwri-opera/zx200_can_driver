@@ -14,28 +14,28 @@
 
 class zx200_can : public zx200_dbc
 {
-  public:
-    zx200_can(boost::asio::io_context &io, std::string can_port, std::string dbc_path)
-        : zx200_dbc(dbc_path),
-          send_timer(io, boost::asio::chrono::milliseconds(initial_interval)),
-          send_timer1(io, boost::asio::chrono::milliseconds(initial_interval)),
-          send_timer2(io, boost::asio::chrono::milliseconds(initial_interval)),
-          sock(io)
-    {
-      const auto idx = canary::get_interface_index(can_port);
-      auto const ep = canary::raw::endpoint{idx};
-      sock.open();
-      sock.bind(ep);
+public:
+  zx200_can(boost::asio::io_context &io, std::string can_port, std::string dbc_path)
+      : zx200_dbc(dbc_path),
+        send_timer(io, boost::asio::chrono::milliseconds(initial_interval)),
+        send_timer1(io, boost::asio::chrono::milliseconds(initial_interval)),
+        send_timer2(io, boost::asio::chrono::milliseconds(initial_interval)),
+        sock(io)
+  {
+    const auto idx = canary::get_interface_index(can_port);
+    auto const ep = canary::raw::endpoint{idx};
+    sock.open();
+    sock.bind(ep);
 
-      pi_cmd1 = boost::shared_ptr<Pilot_Pressure_Cmd_1>(new Pilot_Pressure_Cmd_1{});
-      pi_cmd2 = boost::shared_ptr<Pilot_Pressure_Cmd_2>(new Pilot_Pressure_Cmd_2{});
-      setting_cmd = boost::shared_ptr<Machine_Setting_Cmd>(new Machine_Setting_Cmd{});
+    pi_cmd1 = boost::shared_ptr<zx200::Pilot_Pressure_Cmd_1>(new zx200::Pilot_Pressure_Cmd_1{});
+    pi_cmd2 = boost::shared_ptr<zx200::Pilot_Pressure_Cmd_2>(new zx200::Pilot_Pressure_Cmd_2{});
+    setting_cmd = boost::shared_ptr<zx200::Machine_Setting_Cmd>(new zx200::Machine_Setting_Cmd{});
 
-      alive_cnt = 0;
-      start_receive();
-      send_timer.async_wait(boost::bind(&zx200_can::send_pi_cmd1, this));
-      send_timer1.async_wait(boost::bind(&zx200_can::send_pi_cmd2, this));
-      send_timer2.async_wait(boost::bind(&zx200_can::send_machine_setting_cmd, this));
+    alive_cnt = 0;
+    start_receive();
+    send_timer.async_wait(boost::bind(&zx200_can::send_pi_cmd1, this));
+    send_timer1.async_wait(boost::bind(&zx200_can::send_pi_cmd2, this));
+    send_timer2.async_wait(boost::bind(&zx200_can::send_machine_setting_cmd, this));
     };
     ~zx200_can()
     {
@@ -44,17 +44,17 @@ class zx200_can : public zx200_dbc
       send_timer2.cancel();
     }
 
-    void set_pilot_pressure_cmd1(Pilot_Pressure_Cmd_1 cmd)
+    void set_pilot_pressure_cmd1(zx200::Pilot_Pressure_Cmd_1 cmd)
     {
-      pi_cmd1 = boost::make_shared<Pilot_Pressure_Cmd_1>(cmd);
+      pi_cmd1 = boost::make_shared<zx200::Pilot_Pressure_Cmd_1>(cmd);
     }
-    void set_pilot_pressure_cmd2(Pilot_Pressure_Cmd_2 cmd)
+    void set_pilot_pressure_cmd2(zx200::Pilot_Pressure_Cmd_2 cmd)
     {
-      pi_cmd2 = boost::make_shared<Pilot_Pressure_Cmd_2>(cmd);
+      pi_cmd2 = boost::make_shared<zx200::Pilot_Pressure_Cmd_2>(cmd);
     }
-    void set_machine_setting_cmd(Machine_Setting_Cmd cmd)
+    void set_machine_setting_cmd(zx200::Machine_Setting_Cmd cmd)
     {
-      setting_cmd = boost::make_shared<Machine_Setting_Cmd>(cmd);
+      setting_cmd = boost::make_shared<zx200::Machine_Setting_Cmd>(cmd);
     }
 
   private:
@@ -116,8 +116,8 @@ class zx200_can : public zx200_dbc
     boost::asio::steady_timer send_timer, send_timer1, send_timer2;
     canary::raw::socket sock;
     frame recv_f;
-    boost::shared_ptr<Pilot_Pressure_Cmd_1> pi_cmd1;
-    boost::shared_ptr<Pilot_Pressure_Cmd_2> pi_cmd2;
-    boost::shared_ptr<Machine_Setting_Cmd> setting_cmd;
+    boost::shared_ptr<zx200::Pilot_Pressure_Cmd_1> pi_cmd1;
+    boost::shared_ptr<zx200::Pilot_Pressure_Cmd_2> pi_cmd2;
+    boost::shared_ptr<zx200::Machine_Setting_Cmd> setting_cmd;
     std::uint8_t alive_cnt;
 };
