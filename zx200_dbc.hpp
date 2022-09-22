@@ -48,7 +48,26 @@ public:
           rttr::property prop = rttr::type::get(*can_bus).get_property(name);
           if(!prop)
             std::cout << "error: " << name << std::endl;
-          prop.set_value(*can_bus, sig.RawToPhys(sig.Decode(&f.payload[0])));
+          bool ret = false;
+          ret = prop.set_value(*can_bus, (double)sig.RawToPhys(sig.Decode(&f.payload[0])));
+          if (!ret)
+            ret = prop.set_value(*can_bus, (bool)sig.RawToPhys(sig.Decode(&f.payload[0])));
+          if (!ret)
+            ret = prop.set_value(*can_bus, (std::uint8_t)sig.RawToPhys(sig.Decode(&f.payload[0])));
+          if (!ret)
+            ret = prop.set_value(*can_bus, (std::int8_t)sig.RawToPhys(sig.Decode(&f.payload[0])));
+          if (!ret)
+            ret = prop.set_value(*can_bus, (std::uint16_t)sig.RawToPhys(sig.Decode(&f.payload[0])));
+          if (!ret)
+            ret = prop.set_value(*can_bus, (std::int16_t)sig.RawToPhys(sig.Decode(&f.payload[0])));
+          if (!ret)
+            ret = prop.set_value(*can_bus, (std::uint32_t)sig.RawToPhys(sig.Decode(&f.payload[0])));
+          if (!ret)
+            ret = prop.set_value(*can_bus, (std::int32_t)sig.RawToPhys(sig.Decode(&f.payload[0])));
+          if (!ret)
+            ret = prop.set_value(*can_bus, (std::uint64_t)sig.RawToPhys(sig.Decode(&f.payload[0])));
+          if (!ret)
+            ret = prop.set_value(*can_bus, (std::int64_t)sig.RawToPhys(sig.Decode(&f.payload[0])));
         }
       }
     }
