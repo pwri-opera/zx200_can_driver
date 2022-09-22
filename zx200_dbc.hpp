@@ -9,7 +9,7 @@
 #include <canary/interface_index.hpp>
 #include <canary/raw.hpp>
 
-#include "can_message.hpp"
+#include "zx200_dbc_struct.hpp"
 
 struct frame
 {
