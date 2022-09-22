@@ -219,6 +219,9 @@ public:
   }
   void update_window()
   {
+    Machine_State state;
+    zx200_can::zx200_dbc::get_can_bus_msg(state);
+
     werase(gwSub[1]);
     wprintw(gwSub[1], "Commands:\n");
 
@@ -233,8 +236,21 @@ public:
     wprintw(gwSub[1], " engine rpm   %d [rpm]\n", setting_cmd->engine_rpm);
 
     werase(gwSub[2]);
-    wprintw(gwSub[2], "State:\n");
-    wprintw(gwSub[2], "  engine rpm   %d [rpm]\n", 0);
+    wprintw(gwSub[2], "Machine State:\n");
+    wprintw(gwSub[2], "  lock_cmd_state   %d [0:off,1:on]\n", state.lock_cmd_state);
+    wprintw(gwSub[2], "  unlock_cmd_state   %d [0:off,1:on]\n", state.unlock_cmd_state);
+    wprintw(gwSub[2], "  pi_shutoff_state   %d [0:lock,1:unlock]\n", state.pilot_shutoff_valve_state);
+    wprintw(gwSub[2], "  zx200x7_system_error   %d [0:ok,1:err]\n", state.zx200x7_system_error);
+    wprintw(gwSub[2], "  can_error_pl   %d [0:ok,1:err]\n", state.can_error_pl);
+    wprintw(gwSub[2], "  can_error_body   %d [0:ok,1:err]\n", state.can_error_body);
+    wprintw(gwSub[2], "  can_error_ict   %d [0:ok,1:err]\n", state.can_error_ict);
+    wprintw(gwSub[2], "  lock_receiver_error   %d [0:ok,1:err]\n", state.lock_receiver_error);
+    wprintw(gwSub[2], "  emg_stop_recver_error   %d [0:ok,1:err]\n", state.emergency_stop_receiver_error);
+    wprintw(gwSub[2], "  control_state   %d [-]\n", state.control_state);
+    wprintw(gwSub[2], "  engine_state   %d [0:off,1:one]\n", state.engine_state);
+    wprintw(gwSub[2], "  hydraulic_oil_temp   %d [degC]\n", state.hydraulic_oil_temp);
+    wprintw(gwSub[2], "  alive_counter   %d [-]\n", state.alive_counter);
+
 
     wrefresh(gwSub[1]);
     wrefresh(gwSub[2]);
