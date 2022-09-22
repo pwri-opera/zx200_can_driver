@@ -78,6 +78,10 @@ public:
   {
   }
 
+  void get_can_bus_msg(auto &decoded_can_msg_struct)
+  {
+    decoded_can_msg_struct = *can_bus;
+  }
 private:
   std::unordered_map<uint64_t, const dbcppp::IMessage *> messages;
   std::unique_ptr<dbcppp::INetwork> net;
