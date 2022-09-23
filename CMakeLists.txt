@@ -18,3 +18,9 @@ target_link_libraries(zx200_keynav PUBLIC canary::canary
                         boost_timer
                         dbcppp
                         RTTR::Core)
+
+install(TARGETS zx200_keynav
+        DESTINATION ${CMAKE_INSTALL_BINDIR})
+
+install(FILES zx200.dbc
+        DESTINATION share/dbc)
