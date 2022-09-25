@@ -20,7 +20,11 @@ target_link_libraries(zx200_keynav PUBLIC canary::canary
                         RTTR::Core)
 
 install(TARGETS zx200_keynav
-        DESTINATION ${CMAKE_INSTALL_BINDIR})
+        DESTINATION ${${CMAKE_INSTALL_INCLUDEDIR}}/zx200)
+
+install(FILES zx200_can.hpp zx200_dbc.hpp
+        DESTINATION include/zx200)
+
 
 install(FILES zx200.dbc
         DESTINATION share/dbc)
