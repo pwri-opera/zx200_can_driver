@@ -62,8 +62,8 @@ public:
     wprintw(gwSub[0], "  r:bucket crowd, f:bucket dump\n");
     wprintw(gwSub[0], "  t:swing right, g:swing left\n\n");
     wprintw(gwSub[0], " Tracks:\n");
-    wprintw(gwSub[0], "  u:left front, i:right front\n");
-    wprintw(gwSub[0], "  j:left back, k:right back\n\n");
+    wprintw(gwSub[0], "  i:forward, k:backward\n");
+    wprintw(gwSub[0], "  j:left turn, l:right turn\n\n");
     wprintw(gwSub[0], "  [SPACE]   All stop\n");
     wprintw(gwSub[0], "   q        Quit ");
 
@@ -138,6 +138,22 @@ public:
     case '/': //switch  yellow led to steady light
       setting_cmd->yellow_led_mode = 0x2;
       break;
+    case 'i':
+      pilot_pressure_pi1_increase(pi_cmd2->right_track_forward, pi_cmd2->right_track_backward);
+      pilot_pressure_pi1_increase(pi_cmd2->left_track_forward, pi_cmd2->left_track_backward);
+      break;
+    case 'k':
+      pilot_pressure_pi2_increase(pi_cmd2->right_track_forward, pi_cmd2->right_track_backward);
+      pilot_pressure_pi2_increase(pi_cmd2->left_track_forward, pi_cmd2->left_track_backward);
+      break;
+    case 'l':
+      // pilot_pressure_pi2_increase(pi_cmd2->right_track_forward, pi_cmd2->right_track_backward);
+      pilot_pressure_pi1_increase(pi_cmd2->left_track_forward, pi_cmd2->left_track_backward);
+      break;
+    case 'j':
+      pilot_pressure_pi1_increase(pi_cmd2->right_track_forward, pi_cmd2->right_track_backward);
+      // pilot_pressure_pi2_increase(pi_cmd2->left_track_forward, pi_cmd2->left_track_backward);
+      break;
     case ' ':
       pi_cmd1 = boost::shared_ptr<zx200::Pilot_Pressure_Cmd_1>(new zx200::Pilot_Pressure_Cmd_1{});
       pi_cmd2 = boost::shared_ptr<zx200::Pilot_Pressure_Cmd_2>(new zx200::Pilot_Pressure_Cmd_2{});
@@ -178,7 +194,14 @@ public:
     wprintw(gwSub[1], " bucket crowd  %2.2f [MPa]\n", pi_cmd1->bucket_crowd);
     wprintw(gwSub[1], " bucket dump %2.2f [MPa]\n", pi_cmd1->bucket_dump);
     wprintw(gwSub[1], " swing right  %2.2f [MPa]\n", pi_cmd1->swing_right);
-    wprintw(gwSub[1], " swing left   %2.2f [MPa]\n\n", pi_cmd1->swing_left);
+    wprintw(gwSub[1], " swing left   %2.2f [MPa]\n", pi_cmd1->swing_left);
+
+    wprintw(gwSub[1], " right track forward  %2.2f [MPa]\n", pi_cmd2->right_track_forward);
+    wprintw(gwSub[1], " right track backward  %2.2f [MPa]\n", pi_cmd2->right_track_backward);
+    wprintw(gwSub[1], " left track forward  %2.2f [MPa]\n", pi_cmd2->left_track_forward);
+    wprintw(gwSub[1], " left track backward  %2.2f [MPa]\n", pi_cmd2->left_track_backward);
+
+
     wprintw(gwSub[1], " engine rpm   %d [rpm]\n", setting_cmd->engine_rpm);
     wprintw(gwSub[1], " power eco mode   %d [0:ECO,1:PWR]\n", setting_cmd->power_eco_mode);
     wprintw(gwSub[1], " rabbit/turtle   %d [0:rabbit,1:turtle]\n", setting_cmd->travel_speed_mode);
@@ -254,7 +277,6 @@ private:
     boost::shared_ptr<zx200::Pilot_Pressure_Cmd_2> pi_cmd2;
     boost::shared_ptr<zx200::Machine_Setting_Cmd> setting_cmd;
 };
-
 
 int main(int argc, char **argv)
 {
