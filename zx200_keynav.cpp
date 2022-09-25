@@ -19,12 +19,10 @@ class zx200_keynav : public zx200_can
 public:
   zx200_keynav(boost::asio::io_context &io, std::string can_port, std::string dbc_path) : zx200_can(io, can_port, dbc_path)
   {
-    // gwUI = ui;
     pi_cmd1 = boost::shared_ptr<zx200::Pilot_Pressure_Cmd_1>(new zx200::Pilot_Pressure_Cmd_1{});
     pi_cmd2 = boost::shared_ptr<zx200::Pilot_Pressure_Cmd_2>(new zx200::Pilot_Pressure_Cmd_2{});
     setting_cmd = boost::shared_ptr<zx200::Machine_Setting_Cmd>(new zx200::Machine_Setting_Cmd{});
-    boom_pi_cmd = arm_pi_cmd = bucket_pi_cmd = swing_pi_cmd = 0;
-    setting_cmd->engine_rpm = engine_rpm = 900;
+    setting_cmd->engine_rpm = 900;
 
     int iport;
     int i;
@@ -84,42 +82,34 @@ public:
     switch (com)
     {
     case 'w':
-      boom_pi_cmd += 0.02*5;
-      pilot_pressure_clamp(boom_pi_cmd);
+      pilot_pressure_pi1_increase(pi_cmd1->boom_up,pi_cmd1->boom_down);
       break;
     case 's':
-      boom_pi_cmd -= 0.02*5;
-      pilot_pressure_clamp(boom_pi_cmd);
+      pilot_pressure_pi2_increase(pi_cmd1->boom_up, pi_cmd1->boom_down);
       break;
     case 'e':
-      arm_pi_cmd += 0.02*5;
-      pilot_pressure_clamp(arm_pi_cmd);
+      pilot_pressure_pi1_increase(pi_cmd1->arm_crowd, pi_cmd1->arm_dump);
       break;
     case 'd':
-      arm_pi_cmd -= 0.02*5;
-      pilot_pressure_clamp(arm_pi_cmd);
+      pilot_pressure_pi2_increase(pi_cmd1->arm_crowd, pi_cmd1->arm_dump);
       break;
     case 'r':
-      bucket_pi_cmd += 0.02*5;
-      pilot_pressure_clamp(bucket_pi_cmd);
+      pilot_pressure_pi1_increase(pi_cmd1->bucket_crowd, pi_cmd1->bucket_dump);
       break;
     case 'f':
-      bucket_pi_cmd -= 0.02*5;
-      pilot_pressure_clamp(bucket_pi_cmd);
+      pilot_pressure_pi2_increase(pi_cmd1->bucket_crowd, pi_cmd1->bucket_dump);
       break;
     case 't':
-      swing_pi_cmd += 0.02*5;
-      pilot_pressure_clamp(swing_pi_cmd);
+      pilot_pressure_pi1_increase(pi_cmd1->swing_right, pi_cmd1->swing_left);
       break;
     case 'g':
-      swing_pi_cmd -= 0.02*5;
-      pilot_pressure_clamp(swing_pi_cmd);
+      pilot_pressure_pi2_increase(pi_cmd1->swing_right, pi_cmd1->swing_left);
       break;
     case '+':
-      engine_rpm += 100;
+      setting_cmd->engine_rpm += 100;
       break;
     case '-':
-      engine_rpm -= 100;
+      setting_cmd->engine_rpm -= 100;
       break;
     case 'x': // eco mode
       setting_cmd->power_eco_mode = 0x0;
@@ -139,7 +129,6 @@ public:
     case 'm': // switch working_mode_notice to automation
       setting_cmd->working_mode_notice = true;
       break;
-
     case ','://switch yellow led to off
       setting_cmd->yellow_led_mode = 0x0;
       break;
@@ -150,65 +139,22 @@ public:
       setting_cmd->yellow_led_mode = 0x2;
       break;
     case ' ':
-      arm_pi_cmd = bucket_pi_cmd = swing_pi_cmd = 0;
-      boom_pi_cmd = 0;
-      engine_rpm = 900;
+      pi_cmd1 = boost::shared_ptr<zx200::Pilot_Pressure_Cmd_1>(new zx200::Pilot_Pressure_Cmd_1{});
+      pi_cmd2 = boost::shared_ptr<zx200::Pilot_Pressure_Cmd_2>(new zx200::Pilot_Pressure_Cmd_2{});
+      setting_cmd = boost::shared_ptr<zx200::Machine_Setting_Cmd>(new zx200::Machine_Setting_Cmd{});
+      setting_cmd->engine_rpm = 900;
       break;
-
     case 'q': // end
-      arm_pi_cmd = bucket_pi_cmd = swing_pi_cmd = 0;
-      boom_pi_cmd = 0;
-      engine_rpm = 900;
+      pi_cmd1 = boost::shared_ptr<zx200::Pilot_Pressure_Cmd_1>(new zx200::Pilot_Pressure_Cmd_1{});
+      pi_cmd2 = boost::shared_ptr<zx200::Pilot_Pressure_Cmd_2>(new zx200::Pilot_Pressure_Cmd_2{});
+      setting_cmd = boost::shared_ptr<zx200::Machine_Setting_Cmd>(new zx200::Machine_Setting_Cmd{});
+      setting_cmd->engine_rpm = 900;
       return false;
     }
-    if (boom_pi_cmd >= 0)
-    {
-      pi_cmd1->boom_up = boom_pi_cmd; // boom_cmd);
-      pi_cmd1->boom_down = 0;
-    }
-    else
-    {
-      pi_cmd1->boom_up = 0;
-      pi_cmd1->boom_down = abs(boom_pi_cmd);// abs(boom_cmd));
-    }
-    if (arm_pi_cmd >= 0)
-    {
-      pi_cmd1->arm_crowd = arm_pi_cmd;
-      pi_cmd1->arm_dump = 0;
-    }
-    else
-    {
-      pi_cmd1->arm_crowd = 0;
-      pi_cmd1->arm_dump = abs(arm_pi_cmd);
-    }
-    if (bucket_pi_cmd >= 0)
-    {
-      pi_cmd1->bucket_crowd = bucket_pi_cmd;
-      pi_cmd1->bucket_dump = 0;
-    }
-    else
-    {
-      pi_cmd1->bucket_crowd = 0;
-      pi_cmd1->bucket_dump = abs(bucket_pi_cmd);
-    }
-    if (swing_pi_cmd >= 0)
-    {
-      pi_cmd1->swing_right = swing_pi_cmd;
-      pi_cmd1->swing_left = 0;
-    }
-    else
-    {
-      pi_cmd1->swing_right = 0;
-      pi_cmd1->swing_left = abs(swing_pi_cmd);
-    }
-    if (engine_rpm >= 0)
-    {
-      setting_cmd->engine_rpm = engine_rpm; // engine_rpm);
-    }
-    else
+
+    if (setting_cmd->engine_rpm < 0.)
     {
       setting_cmd->engine_rpm = 0;
-      engine_rpm = 0;
     }
 
     set_pilot_pressure_cmd1(*pi_cmd1);
@@ -234,6 +180,10 @@ public:
     wprintw(gwSub[1], " swing right  %2.2f [MPa]\n", pi_cmd1->swing_right);
     wprintw(gwSub[1], " swing left   %2.2f [MPa]\n\n", pi_cmd1->swing_left);
     wprintw(gwSub[1], " engine rpm   %d [rpm]\n", setting_cmd->engine_rpm);
+    wprintw(gwSub[1], " power eco mode   %d [0:ECO,1:PWR]\n", setting_cmd->power_eco_mode);
+    wprintw(gwSub[1], " rabbit/turtle   %d [0:rabbit,1:turtle]\n", setting_cmd->travel_speed_mode);
+    wprintw(gwSub[1], " working mode   %d [0:tele,1:auto]\n", setting_cmd->working_mode_notice);
+    wprintw(gwSub[1], " yellow LED  %d [0:off,1:blinking,2:steady light]\n", setting_cmd->yellow_led_mode);
 
     werase(gwSub[2]);
     wprintw(gwSub[2], "Machine State:\n");
@@ -263,20 +213,46 @@ private:
   void pilot_pressure_clamp(double &input)
   {
     if (input > 0.02*250)
-    {
       input = 0.02 * 250;
-    }
     else if (input < -0.02 * 250)
-    {
       input = -0.02 * 250;
-    }
+    else if(input < 0.)
+      input = 0;
   }
+  void pilot_pressure_pi1_increase(double &pi1,double &pi2)
+  {
+    if(pi1>=0. && pi2==0.)
+    {
+      pi1+=0.02*5;
+      pilot_pressure_clamp(pi1);
+    }
+    else if(pi1==0. && pi2>=0.)
+    {
+      pi2 -= 0.02 * 5;
+      pilot_pressure_clamp(pi2);
+    }
+    pi1 = std::round(pi1 * 100) / 100;
+    pi2 = std::round(pi2 * 100) / 100;
 
-  boost::shared_ptr<zx200::Pilot_Pressure_Cmd_1> pi_cmd1;
-  boost::shared_ptr<zx200::Pilot_Pressure_Cmd_2> pi_cmd2;
-  boost::shared_ptr<zx200::Machine_Setting_Cmd> setting_cmd;
-  double boom_pi_cmd, arm_pi_cmd, bucket_pi_cmd, swing_pi_cmd;
-  int engine_rpm;
+  }
+  void pilot_pressure_pi2_increase(double &pi1, double &pi2)
+  {
+    if (pi1 == 0. && pi2 >= 0.)
+    {
+      pi2 += 0.02 * 5;
+      pilot_pressure_clamp(pi2);
+    }
+    else if (pi1 >= 0. && pi2 == 0.)
+    {
+      pi1 -= 0.02 * 5;
+      pilot_pressure_clamp(pi1);
+    }
+    pi1 = std::round(pi1*100)/100;
+    pi2 = std::round(pi2*100)/100;
+  }
+    boost::shared_ptr<zx200::Pilot_Pressure_Cmd_1> pi_cmd1;
+    boost::shared_ptr<zx200::Pilot_Pressure_Cmd_2> pi_cmd2;
+    boost::shared_ptr<zx200::Machine_Setting_Cmd> setting_cmd;
 };
 
 
