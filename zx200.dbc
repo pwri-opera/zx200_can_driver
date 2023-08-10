@@ -1,4 +1,4 @@
-VERSION ""
+VERSION "zx200ph2r1.2"
 
 
 NS_ : 
@@ -33,138 +33,153 @@ NS_ :
 
 BS_:
 
-BU_: VehicleMotionController Hitachi_AutomationController
+BU_: ExternalController Hitachi_AutomationController
 VAL_TABLE_ Yellow_Led_Mode 2 "Steady light" 1 "Blinking" 0 "Off" ;
 VAL_TABLE_ Working_Mode_Notice 1 "Automation" 0 "Teleoperation" ;
 VAL_TABLE_ Travel_Speed_Mode 1 "Turtle" 0 "Rabbit" ;
 VAL_TABLE_ Power_Eco_Mode 1 "Power Mode" 0 "Eco Mode" ;
 
 
-BO_ 2566882536 Machine_State: 8 VehicleMotionController
- SG_ alive_counter : 56|8@1+ (1,0) [0|0] "-"  Hitachi_AutomationController
- SG_ hydraulic_oil_temp : 24|8@1+ (1,-100) [-100|150] "degC"  Hitachi_AutomationController
- SG_ engine_state : 40|1@1+ (1,0) [0|0] "-"  Hitachi_AutomationController
- SG_ control_state : 16|8@1+ (1,0) [0|0] "-"  Hitachi_AutomationController
- SG_ switch_error : 14|1@1+ (1,0) [0|0] "-"  Hitachi_AutomationController
- SG_ emergency_stop_receiver_error : 13|1@1+ (1,0) [0|0] "-"  Hitachi_AutomationController
- SG_ lock_receiver_error : 12|1@1+ (1,0) [0|0] "-"  Hitachi_AutomationController
- SG_ can_error_ict : 11|1@1+ (1,0) [0|0] "-"  Hitachi_AutomationController
- SG_ can_error_body : 10|1@1+ (1,0) [0|0] "-"  Hitachi_AutomationController
- SG_ can_error_pl : 9|1@1+ (1,0) [0|0] "-"  Hitachi_AutomationController
- SG_ zx200x7_system_error : 8|1@1+ (1,0) [0|0] "-"  Hitachi_AutomationController
- SG_ pilot_shutoff_valve_state : 6|1@1+ (1,0) [0|0] "-"  Hitachi_AutomationController
- SG_ unlock_cmd_state : 1|1@1+ (1,0) [0|0] "-"  Hitachi_AutomationController
- SG_ lock_cmd_state : 0|1@1+ (1,0) [0|0] "-"  Hitachi_AutomationController
+BO_ 2566875146 Velocity_Cmd_2: 8 ExternalController
+ SG_ target_travel_yaw_rate : 48|16@1+ (0.0005,-16) [-16|16] "rad/s"  Hitachi_AutomationController
+ SG_ target_travel_left_velocity : 32|16@1+ (0.001,-32) [-32|32] "m/s"  Hitachi_AutomationController
+ SG_ target_travel_right_velocity : 16|16@1+ (0.001,-32) [-32|32] "m/s"  Hitachi_AutomationController
+ SG_ target_travel_center_velocity : 0|16@1+ (0.001,-32) [-32|32] "m/s"  Hitachi_AutomationController
 
-BO_ 2566881512 Hydraulic_Flow_Rate_2: 8 VehicleMotionController
- SG_ left_track_motor_b_flow_rate : 24|8@1+ (8,-1000) [-1000|1000] "L/min"  Hitachi_AutomationController
- SG_ left_track_motor_a_flow_rate : 16|8@1+ (8,-1000) [-1000|1000] "L/min"  Hitachi_AutomationController
- SG_ right_track_motor_b_flow_rate : 8|8@1+ (8,-1000) [-1000|1000] "L/min"  Hitachi_AutomationController
- SG_ right_track_motor_a_flow_rate : 0|8@1+ (8,-1000) [-1000|1000] "L/min"  Hitachi_AutomationController
+BO_ 2566874890 Velocity_Cmd_1: 8 ExternalController
+ SG_ swing_target_anguler_velocity : 48|16@1+ (0.0005,-16) [-16|16] "rad/s"  Hitachi_AutomationController
+ SG_ bucket_target_anguler_velocity : 32|16@1+ (0.0005,-16) [-16|16] "rad/s"  Hitachi_AutomationController
+ SG_ arm_target_anguler_velocity : 16|16@1+ (0.0005,-16) [-16|16] "rad/s"  Hitachi_AutomationController
+ SG_ boom_target_anguler_velocity : 0|16@1+ (0.0005,-16) [-16|16] "rad/s"  Hitachi_AutomationController
 
-BO_ 2566881256 Hydraulic_Flow_Rate_1: 8 VehicleMotionController
- SG_ swing_motor_b_flow_rate : 56|8@1+ (8,-1000) [-1000|1000] "L/min"  Hitachi_AutomationController
- SG_ swing_motor_a_flow_rate : 48|8@1+ (8,-1000) [-1000|1000] "L/min"  Hitachi_AutomationController
- SG_ bucket_cylinder_rod_flow_rate : 40|8@1+ (8,-1000) [-1000|1000] "L/min"  Hitachi_AutomationController
- SG_ bucket_cylinder_bottom_flow_rate : 32|8@1+ (8,-1000) [-1000|1000] "L/min"  Hitachi_AutomationController
- SG_ arm_cylinder_rod_flow_rate : 24|8@1+ (8,-1000) [-1000|1000] "L/min"  Hitachi_AutomationController
- SG_ arm_cylinder_bottom_flow_rate : 16|8@1+ (8,-1000) [-1000|1000] "L/min"  Hitachi_AutomationController
- SG_ boom_cylinder_rod_flow_rate : 8|8@1+ (8,-1000) [-1000|1000] "L/min"  Hitachi_AutomationController
- SG_ boom_cylinder_bottom_flow_rate : 0|8@1+ (8,-1000) [-1000|1000] "L/min"  Hitachi_AutomationController
+BO_ 2566882536 Machine_State: 8 Hitachi_AutomationController
+ SG_ alive_counter : 56|8@1+ (1,0) [0|0] "-"  ExternalController
+ SG_ hydraulic_oil_temp : 24|8@1+ (1,-100) [-100|150] "degC"  ExternalController
+ SG_ engine_state : 40|1@1+ (1,0) [0|0] "-"  ExternalController
+ SG_ control_state : 16|8@1+ (1,0) [0|0] "-"  ExternalController
+ SG_ switch_error : 14|1@1+ (1,0) [0|0] "-"  ExternalController
+ SG_ emergency_stop_receiver_error : 13|1@1+ (1,0) [0|0] "-"  ExternalController
+ SG_ lock_receiver_error : 12|1@1+ (1,0) [0|0] "-"  ExternalController
+ SG_ can_error_ict : 11|1@1+ (1,0) [0|0] "-"  ExternalController
+ SG_ can_error_body : 10|1@1+ (1,0) [0|0] "-"  ExternalController
+ SG_ can_error_pl : 9|1@1+ (1,0) [0|0] "-"  ExternalController
+ SG_ zx200x7_system_error : 8|1@1+ (1,0) [0|0] "-"  ExternalController
+ SG_ pilot_shutoff_valve_state : 6|1@1+ (1,0) [0|0] "-"  ExternalController
+ SG_ unlock_cmd_state : 1|1@1+ (1,0) [0|0] "-"  ExternalController
+ SG_ lock_cmd_state : 0|1@1+ (1,0) [0|0] "-"  ExternalController
 
-BO_ 2566880488 Pilot_Pressure_2: 8 VehicleMotionController
- SG_ assist_b_pilot_pressure : 56|8@1+ (0.02,0) [0|5] "MPa"  Hitachi_AutomationController
- SG_ assist_a_pilot_pressure : 48|8@1+ (0.02,0) [0|5] "MPa"  Hitachi_AutomationController
- SG_ attachment_b_pilot_pressure : 40|8@1+ (0.02,0) [0|5] "MPa"  Hitachi_AutomationController
- SG_ attachment_a_pilot_pressure : 32|8@1+ (0.02,0) [0|5] "MPa"  Hitachi_AutomationController
- SG_ left_track_backward_pilot_prs : 24|8@1+ (0.02,0) [0|5] "MPa"  Hitachi_AutomationController
- SG_ left_track_forward_pilot_prs : 16|8@1+ (0.02,0) [0|5] "MPa"  Hitachi_AutomationController
- SG_ right_track_backward_pilot_prs : 8|8@1+ (0.02,0) [0|5] "MPa"  Hitachi_AutomationController
- SG_ right_track_forward_pilot_prs : 0|8@1+ (0.02,0) [0|5] "MPa"  Hitachi_AutomationController
+BO_ 2566881512 Hydraulic_Flow_Rate_2: 8 Hitachi_AutomationController
+ SG_ left_track_motor_b_flow_rate : 24|8@1+ (8,-1000) [-1000|1000] "L/min"  ExternalController
+ SG_ left_track_motor_a_flow_rate : 16|8@1+ (8,-1000) [-1000|1000] "L/min"  ExternalController
+ SG_ right_track_motor_b_flow_rate : 8|8@1+ (8,-1000) [-1000|1000] "L/min"  ExternalController
+ SG_ right_track_motor_a_flow_rate : 0|8@1+ (8,-1000) [-1000|1000] "L/min"  ExternalController
 
-BO_ 2566880232 Pilot_Pressure_1: 8 VehicleMotionController
- SG_ swing_left_pilot_pressure : 56|8@1+ (0.02,0) [0|5] "MPa"  Hitachi_AutomationController
- SG_ swing_right_pilot_pressure : 48|8@1+ (0.02,0) [0|5] "MPa"  Hitachi_AutomationController
- SG_ bucket_dump_pilot_pressure : 40|8@1+ (0.02,0) [0|5] "MPa"  Hitachi_AutomationController
- SG_ bucket_crowd_pilot_pressure : 32|8@1+ (0.02,0) [0|5] "MPa"  Hitachi_AutomationController
- SG_ arm_dump_pilot_pressure : 24|8@1+ (0.02,0) [0|5] "MPa"  Hitachi_AutomationController
- SG_ arm_crowd_pilot_pressure : 16|8@1+ (0.02,0) [0|5] "MPa"  Hitachi_AutomationController
- SG_ boom_down_pilot_pressure : 8|8@1+ (0.02,0) [0|5] "MPa"  Hitachi_AutomationController
- SG_ boom_up_pilot_pressure : 0|8@1+ (0.02,0) [0|5] "MPa"  Hitachi_AutomationController
+BO_ 2566881256 Hydraulic_Flow_Rate_1: 8 Hitachi_AutomationController
+ SG_ swing_motor_b_flow_rate : 56|8@1+ (8,-1000) [-1000|1000] "L/min"  ExternalController
+ SG_ swing_motor_a_flow_rate : 48|8@1+ (8,-1000) [-1000|1000] "L/min"  ExternalController
+ SG_ bucket_cylinder_rod_flow_rate : 40|8@1+ (8,-1000) [-1000|1000] "L/min"  ExternalController
+ SG_ bucket_cylinder_bottom_flow_rate : 32|8@1+ (8,-1000) [-1000|1000] "L/min"  ExternalController
+ SG_ arm_cylinder_rod_flow_rate : 24|8@1+ (8,-1000) [-1000|1000] "L/min"  ExternalController
+ SG_ arm_cylinder_bottom_flow_rate : 16|8@1+ (8,-1000) [-1000|1000] "L/min"  ExternalController
+ SG_ boom_cylinder_rod_flow_rate : 8|8@1+ (8,-1000) [-1000|1000] "L/min"  ExternalController
+ SG_ boom_cylinder_bottom_flow_rate : 0|8@1+ (8,-1000) [-1000|1000] "L/min"  ExternalController
 
-BO_ 2566879976 Pressure_2: 8 VehicleMotionController
- SG_ assit_b_pressure : 56|8@1+ (0.2,-10) [-10|40] "MPa"  Hitachi_AutomationController
- SG_ assist_a_pressure : 48|8@1+ (0.2,-10) [-10|40] "MPa"  Hitachi_AutomationController
- SG_ attachment_b_pressure : 40|8@1+ (0.2,-10) [-10|40] "MPa"  Hitachi_AutomationController
- SG_ attachment_a_pressure : 32|8@1+ (0.2,-10) [-10|40] "MPa"  Hitachi_AutomationController
- SG_ left_track_motor_b_pressure : 24|8@1+ (0.2,-10) [-10|40] "MPa"  Hitachi_AutomationController
- SG_ left_track_motor_a_pressure : 16|8@1+ (0.2,-10) [-10|40] "MPa"  Hitachi_AutomationController
- SG_ right_track_motor_b_pressure : 8|8@1+ (0.2,-10) [-10|40] "MPa"  Hitachi_AutomationController
- SG_ right_track_motor_a_pressure : 0|8@1+ (0.2,-10) [-10|40] "MPa"  Hitachi_AutomationController
+BO_ 2566880488 Pilot_Pressure_2: 8 Hitachi_AutomationController
+ SG_ assist_b_pilot_pressure : 56|8@1+ (0.02,0) [0|5] "MPa"  ExternalController
+ SG_ assist_a_pilot_pressure : 48|8@1+ (0.02,0) [0|5] "MPa"  ExternalController
+ SG_ attachment_b_pilot_pressure : 40|8@1+ (0.02,0) [0|5] "MPa"  ExternalController
+ SG_ attachment_a_pilot_pressure : 32|8@1+ (0.02,0) [0|5] "MPa"  ExternalController
+ SG_ left_track_backward_pilot_prs : 24|8@1+ (0.02,0) [0|5] "MPa"  ExternalController
+ SG_ left_track_forward_pilot_prs : 16|8@1+ (0.02,0) [0|5] "MPa"  ExternalController
+ SG_ right_track_backward_pilot_prs : 8|8@1+ (0.02,0) [0|5] "MPa"  ExternalController
+ SG_ right_track_forward_pilot_prs : 0|8@1+ (0.02,0) [0|5] "MPa"  ExternalController
 
-BO_ 2566879720 Pressure_1: 8 VehicleMotionController
- SG_ swing_motor_b_pressure : 56|8@1+ (0.2,-10) [-10|40] "MPa"  Hitachi_AutomationController
- SG_ swing_motor_a_pressure : 48|8@1+ (0.2,-10) [-10|40] "MPa"  Hitachi_AutomationController
- SG_ bucket_cylinder_rod_pressure : 40|8@1+ (0.2,-10) [-10|40] "MPa"  Hitachi_AutomationController
- SG_ bucket_cylinder_bottom_pressure : 32|8@1+ (0.2,-10) [-10|40] "MPa"  Hitachi_AutomationController
- SG_ arm_cylinder_rod_pressure : 24|8@1+ (0.2,-10) [-10|40] "MPa"  Hitachi_AutomationController
- SG_ arm_cylinder_bottom_pressure : 16|8@1+ (0.2,-10) [-10|40] "MPa"  Hitachi_AutomationController
- SG_ boom_cylinder_rod_pressure : 8|8@1+ (0.2,-10) [-10|40] "MPa"  Hitachi_AutomationController
- SG_ boom_cylinder_bottom_pressure : 0|8@1+ (0.2,-10) [-10|40] "MPa"  Hitachi_AutomationController
+BO_ 2566880232 Pilot_Pressure_1: 8 Hitachi_AutomationController
+ SG_ swing_left_pilot_pressure : 56|8@1+ (0.02,0) [0|5] "MPa"  ExternalController
+ SG_ swing_right_pilot_pressure : 48|8@1+ (0.02,0) [0|5] "MPa"  ExternalController
+ SG_ bucket_dump_pilot_pressure : 40|8@1+ (0.02,0) [0|5] "MPa"  ExternalController
+ SG_ bucket_crowd_pilot_pressure : 32|8@1+ (0.02,0) [0|5] "MPa"  ExternalController
+ SG_ arm_dump_pilot_pressure : 24|8@1+ (0.02,0) [0|5] "MPa"  ExternalController
+ SG_ arm_crowd_pilot_pressure : 16|8@1+ (0.02,0) [0|5] "MPa"  ExternalController
+ SG_ boom_down_pilot_pressure : 8|8@1+ (0.02,0) [0|5] "MPa"  ExternalController
+ SG_ boom_up_pilot_pressure : 0|8@1+ (0.02,0) [0|5] "MPa"  ExternalController
 
-BO_ 2566887144 Vehicle_Azimuth: 8 VehicleMotionController
- SG_ track_body_azimuth : 16|16@1+ (0.0004,-10) [-10|10] "rad"  Hitachi_AutomationController
- SG_ upper_body_azimuth : 0|16@1+ (0.0004,-10) [-10|10] "rad"  Hitachi_AutomationController
+BO_ 2566879976 Pressure_2: 8 Hitachi_AutomationController
+ SG_ assit_b_pressure : 56|8@1+ (0.2,-10) [-10|40] "MPa"  ExternalController
+ SG_ assist_a_pressure : 48|8@1+ (0.2,-10) [-10|40] "MPa"  ExternalController
+ SG_ attachment_b_pressure : 40|8@1+ (0.2,-10) [-10|40] "MPa"  ExternalController
+ SG_ attachment_a_pressure : 32|8@1+ (0.2,-10) [-10|40] "MPa"  ExternalController
+ SG_ left_track_motor_b_pressure : 24|8@1+ (0.2,-10) [-10|40] "MPa"  ExternalController
+ SG_ left_track_motor_a_pressure : 16|8@1+ (0.2,-10) [-10|40] "MPa"  ExternalController
+ SG_ right_track_motor_b_pressure : 8|8@1+ (0.2,-10) [-10|40] "MPa"  ExternalController
+ SG_ right_track_motor_a_pressure : 0|8@1+ (0.2,-10) [-10|40] "MPa"  ExternalController
 
-BO_ 2566884840 Swing_Center_Position_3: 8 VehicleMotionController
- SG_ swing_center_position_z : 0|64@1+ (0.001,-500000) [-500000|500000] "m"  Hitachi_AutomationController
+BO_ 2566879720 Pressure_1: 8 Hitachi_AutomationController
+ SG_ swing_motor_b_pressure : 56|8@1+ (0.2,-10) [-10|40] "MPa"  ExternalController
+ SG_ swing_motor_a_pressure : 48|8@1+ (0.2,-10) [-10|40] "MPa"  ExternalController
+ SG_ bucket_cylinder_rod_pressure : 40|8@1+ (0.2,-10) [-10|40] "MPa"  ExternalController
+ SG_ bucket_cylinder_bottom_pressure : 32|8@1+ (0.2,-10) [-10|40] "MPa"  ExternalController
+ SG_ arm_cylinder_rod_pressure : 24|8@1+ (0.2,-10) [-10|40] "MPa"  ExternalController
+ SG_ arm_cylinder_bottom_pressure : 16|8@1+ (0.2,-10) [-10|40] "MPa"  ExternalController
+ SG_ boom_cylinder_rod_pressure : 8|8@1+ (0.2,-10) [-10|40] "MPa"  ExternalController
+ SG_ boom_cylinder_bottom_pressure : 0|8@1+ (0.2,-10) [-10|40] "MPa"  ExternalController
 
-BO_ 2566884584 Swing_Center_Position_2: 8 VehicleMotionController
- SG_ swing_center_position_y : 0|64@1+ (0.001,-500000) [-500000|500000] "m"  Hitachi_AutomationController
+BO_ 2566887144 Vehicle_Azimuth: 8 Hitachi_AutomationController
+ SG_ track_body_azimuth : 16|16@1+ (0.0004,-10) [-10|10] "rad"  ExternalController
+ SG_ upper_body_azimuth : 0|16@1+ (0.0004,-10) [-10|10] "rad"  ExternalController
 
-BO_ 2566882792 Swing_Center_Position_1: 8 VehicleMotionController
- SG_ swing_center_position_x : 0|64@1+ (0.001,-500000) [-500000|500000] "m"  Hitachi_AutomationController
+BO_ 2566884840 Swing_Center_Position_3: 8 Hitachi_AutomationController
+ SG_ swing_center_position_z : 0|64@1+ (0.001,-500000) [-500000|500000] "m"  ExternalController
 
-BO_ 2566882280 Front_Pin_Position_3: 8 VehicleMotionController
- SG_ bucket_pin_position_z : 32|16@1+ (0.0004,-12) [-12|12] "m"  Hitachi_AutomationController
- SG_ bucket_pin_position_y : 16|16@1+ (0.0004,-12) [-12|12] "m"  Hitachi_AutomationController
- SG_ bucket_pin_position_x : 0|16@1+ (0.0004,-12) [-12|12] "m"  Hitachi_AutomationController
+BO_ 2566884584 Swing_Center_Position_2: 8 Hitachi_AutomationController
+ SG_ swing_center_position_y : 0|64@1+ (0.001,-500000) [-500000|500000] "m"  ExternalController
 
-BO_ 2566882024 Front_Pin_Position_2: 8 VehicleMotionController
- SG_ arm_pin_position_z : 32|16@1+ (0.0004,-12) [-12|12] "m"  Hitachi_AutomationController
- SG_ arm_pin_position_y : 16|16@1+ (0.0004,-12) [-12|12] "m"  Hitachi_AutomationController
- SG_ arm_pin_position_x : 0|16@1+ (0.0004,-12) [-12|12] "m"  Hitachi_AutomationController
+BO_ 2566882792 Swing_Center_Position_1: 8 Hitachi_AutomationController
+ SG_ swing_center_position_x : 0|64@1+ (0.001,-500000) [-500000|500000] "m"  ExternalController
 
-BO_ 2566881768 Front_Pin_Position_1: 8 VehicleMotionController
- SG_ boom_pin_position_z : 32|16@1+ (0.0004,-12) [-12|12] "m"  Hitachi_AutomationController
- SG_ boom_pin_position_y : 16|16@1+ (0.0004,-12) [-12|12] "m"  Hitachi_AutomationController
- SG_ boom_pin_position_x : 0|16@1+ (0.0004,-12) [-12|12] "m"  Hitachi_AutomationController
+BO_ 2566882280 Front_Pin_Position_3: 8 Hitachi_AutomationController
+ SG_ bucket_pin_position_z : 32|16@1+ (0.0004,-12) [-12|12] "m"  ExternalController
+ SG_ bucket_pin_position_y : 16|16@1+ (0.0004,-12) [-12|12] "m"  ExternalController
+ SG_ bucket_pin_position_x : 0|16@1+ (0.0004,-12) [-12|12] "m"  ExternalController
 
-BO_ 2566881000 Roll_Pitch_Angle: 8 VehicleMotionController
- SG_ pitch_angle : 16|14@1+ (0.0005,-4) [-4|4] "rad"  Hitachi_AutomationController
- SG_ roll_angle : 0|14@1+ (0.0005,-4) [-4|4] "rad"  Hitachi_AutomationController
+BO_ 2566882024 Front_Pin_Position_2: 8 Hitachi_AutomationController
+ SG_ arm_pin_position_z : 32|16@1+ (0.0004,-12) [-12|12] "m"  ExternalController
+ SG_ arm_pin_position_y : 16|16@1+ (0.0004,-12) [-12|12] "m"  ExternalController
+ SG_ arm_pin_position_x : 0|16@1+ (0.0004,-12) [-12|12] "m"  ExternalController
 
-BO_ 2566879464 Front_Angular_Velocity: 8 VehicleMotionController
- SG_ swing_relative_angular_velocity : 48|16@1+ (0.0002,-5) [-5|5] "rad/s"  Hitachi_AutomationController
- SG_ bucket_relative_angular_velocity : 32|16@1+ (0.0002,-5) [-5|5] "rad/s"  Hitachi_AutomationController
- SG_ arm_relative_angular_velocity : 16|16@1+ (0.0002,-5) [-5|5] "rad/s"  Hitachi_AutomationController
- SG_ boom_relative_angular_velocity : 0|16@1+ (0.0002,-5) [-5|5] "rad/s"  Hitachi_AutomationController
+BO_ 2566881768 Front_Pin_Position_1: 8 Hitachi_AutomationController
+ SG_ boom_pin_position_z : 32|16@1+ (0.0004,-12) [-12|12] "m"  ExternalController
+ SG_ boom_pin_position_y : 16|16@1+ (0.0004,-12) [-12|12] "m"  ExternalController
+ SG_ boom_pin_position_x : 0|16@1+ (0.0004,-12) [-12|12] "m"  ExternalController
 
-BO_ 2566880744 Front_Angle: 8 VehicleMotionController
- SG_ bucket_relative_angle : 32|16@1+ (0.0004,-10) [-10|10] "rad"  Hitachi_AutomationController
- SG_ swing_relative_angle : 48|16@1+ (0.0004,-10) [-10|10] "rad"  Hitachi_AutomationController
- SG_ arm_relative_angle : 16|16@1+ (0.0004,-10) [-10|10] "rad"  Hitachi_AutomationController
- SG_ boom_relative_angle : 0|16@1+ (0.0004,-10) [-10|10] "rad"  Hitachi_AutomationController
+BO_ 2566881000 Roll_Pitch_Angle: 8 Hitachi_AutomationController
+ SG_ pitch_angle : 16|14@1+ (0.0005,-4) [-4|4] "rad"  ExternalController
+ SG_ roll_angle : 0|14@1+ (0.0005,-4) [-4|4] "rad"  ExternalController
 
-BO_ 2566874634 Machine_Setting_Cmd: 8 VehicleMotionController
+BO_ 2566879464 Front_Angular_Velocity: 8 Hitachi_AutomationController
+ SG_ swing_relative_angular_velocity : 48|16@1+ (0.0002,-5) [-5|5] "rad/s"  ExternalController
+ SG_ bucket_relative_angular_velocity : 32|16@1+ (0.0002,-5) [-5|5] "rad/s"  ExternalController
+ SG_ arm_relative_angular_velocity : 16|16@1+ (0.0002,-5) [-5|5] "rad/s"  ExternalController
+ SG_ boom_relative_angular_velocity : 0|16@1+ (0.0002,-5) [-5|5] "rad/s"  ExternalController
+
+BO_ 2566880744 Front_Angle: 8 Hitachi_AutomationController
+ SG_ bucket_relative_angle : 32|16@1+ (0.0004,-10) [-10|10] "rad"  ExternalController
+ SG_ swing_relative_angle : 48|16@1+ (0.0004,-10) [-10|10] "rad"  ExternalController
+ SG_ arm_relative_angle : 16|16@1+ (0.0004,-10) [-10|10] "rad"  ExternalController
+ SG_ boom_relative_angle : 0|16@1+ (0.0004,-10) [-10|10] "rad"  ExternalController
+
+BO_ 2566874634 Machine_Setting_Cmd: 8 ExternalController
+ SG_ horn_cmd : 14|2@1+ (1,0) [0|1] "-"  Hitachi_AutomationController
+ SG_ travel_signal_switch_command : 28|4@1+ (1,0) [0|3] ""  Hitachi_AutomationController
+ SG_ front_signal_switch_command : 24|4@1+ (1,0) [0|2] ""  Hitachi_AutomationController
  SG_ working_mode_notice : 11|1@1+ (1,0) [0|0] "-"  Hitachi_AutomationController
- SG_ yellow_led_mode : 12|2@1+ (1,0) [0|0] "-"  Hitachi_AutomationController
+ SG_ yellow_led_mode : 12|2@1+ (1,0) [0|2] "-"  Hitachi_AutomationController
  SG_ travel_speed_mode : 9|2@1+ (1,0) [0|0] "-"  Hitachi_AutomationController
  SG_ power_eco_mode : 8|1@1+ (1,0) [0|0] "-"  Hitachi_AutomationController
  SG_ alive_counter : 56|8@1+ (1,0) [0|0] "-"  Hitachi_AutomationController
  SG_ engine_rpm : 0|8@1+ (10,0) [0|2500] "rpm"  Hitachi_AutomationController
 
-BO_ 2566874378 Pilot_Pressure_Cmd_2: 8 VehicleMotionController
+BO_ 2566874378 Pilot_Pressure_Cmd_2: 8 ExternalController
  SG_ assist_b : 56|8@1+ (0.02,0) [0|5] "MPa"  Hitachi_AutomationController
  SG_ assist_a : 48|8@1+ (0.02,0) [0|5] "MPa"  Hitachi_AutomationController
  SG_ attachment_b : 40|8@1+ (0.02,0) [0|5] "MPa"  Hitachi_AutomationController
@@ -174,7 +189,7 @@ BO_ 2566874378 Pilot_Pressure_Cmd_2: 8 VehicleMotionController
  SG_ left_track_forward : 8|8@1+ (0.02,0) [0|5] "MPa"  Hitachi_AutomationController
  SG_ right_track_forward : 0|8@1+ (0.02,0) [0|5] "MPa"  Hitachi_AutomationController
 
-BO_ 2566874122 Pilot_Pressure_Cmd_1: 8 VehicleMotionController
+BO_ 2566874122 Pilot_Pressure_Cmd_1: 8 ExternalController
  SG_ swing_right : 48|8@1+ (0.02,0) [0|5] "MPa"  Hitachi_AutomationController
  SG_ swing_left : 56|8@1+ (0.02,0) [0|5] "MPa"  Hitachi_AutomationController
  SG_ bucket_dump : 40|8@1+ (0.02,0) [0|5] "MPa"  Hitachi_AutomationController
@@ -190,6 +205,8 @@ BA_DEF_ BO_  "GenMsgCycleTime" INT 0 0;
 BA_DEF_  "BusType" STRING ;
 BA_DEF_DEF_  "GenMsgCycleTime" 0;
 BA_DEF_DEF_  "BusType" "CAN";
+BA_ "GenMsgCycleTime" BO_ 2566875146 10;
+BA_ "GenMsgCycleTime" BO_ 2566874890 10;
 BA_ "GenMsgCycleTime" BO_ 2566882536 50;
 BA_ "GenMsgCycleTime" BO_ 2566881512 20;
 BA_ "GenMsgCycleTime" BO_ 2566881256 20;
