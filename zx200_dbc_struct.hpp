@@ -8,6 +8,30 @@
 
 namespace zx200
 {
+  struct Velocity_Cmd_2
+  {
+    double target_travel_yaw_rate;
+    double target_travel_left_velocity;
+    double target_travel_right_velocity;
+    double target_travel_center_velocity;
+    static const std::uint64_t id = 2566875146;
+    static const std::uint64_t cycle_time = 10;
+    std::uint64_t Id() { return id; }
+    std::uint64_t Cycle_time() { return cycle_time; }
+    RTTR_ENABLE()
+  };
+  struct Velocity_Cmd_1
+  {
+    double swing_target_anguler_velocity;
+    double bucket_target_anguler_velocity;
+    double arm_target_anguler_velocity;
+    double boom_target_anguler_velocity;
+    static const std::uint64_t id = 2566874890;
+    static const std::uint64_t cycle_time = 10;
+    std::uint64_t Id() { return id; }
+    std::uint64_t Cycle_time() { return cycle_time; }
+    RTTR_ENABLE()
+  };
   struct Machine_State
   {
     std::uint8_t alive_counter;
@@ -228,6 +252,9 @@ namespace zx200
   };
   struct Machine_Setting_Cmd
   {
+    std::uint8_t horn_cmd;
+    std::uint8_t travel_signal_switch_cmd;
+    std::uint8_t front_signal_switch_cmd;
     bool working_mode_notice;
     std::uint8_t yellow_led_mode;
     std::uint8_t travel_speed_mode;
@@ -272,13 +299,27 @@ namespace zx200
     static const std::uint64_t cycle_time = 10;
     RTTR_ENABLE()
   };
-  struct Can_Bus : Machine_State, Hydraulic_Flow_Rate_2, Hydraulic_Flow_Rate_1, Pilot_Pressure_2, Pilot_Pressure_1, Pressure_2, Pressure_1, Vehicle_Azimuth, Swing_Center_Position_3, Swing_Center_Position_2, Swing_Center_Position_1, Front_Pin_Position_3, Front_Pin_Position_2, Front_Pin_Position_1, Roll_Pitch_Angle, Front_Angular_Velocity, Front_Angle, Machine_Setting_Cmd, Pilot_Pressure_Cmd_2, Pilot_Pressure_Cmd_1
+  struct Can_Bus : Velocity_Cmd_2, Velocity_Cmd_1, Machine_State, Hydraulic_Flow_Rate_2, Hydraulic_Flow_Rate_1, Pilot_Pressure_2, Pilot_Pressure_1, Pressure_2, Pressure_1, Vehicle_Azimuth, Swing_Center_Position_3, Swing_Center_Position_2, Swing_Center_Position_1, Front_Pin_Position_3, Front_Pin_Position_2, Front_Pin_Position_1, Roll_Pitch_Angle, Front_Angular_Velocity, Front_Angle, Machine_Setting_Cmd, Pilot_Pressure_Cmd_2, Pilot_Pressure_Cmd_1
   {
-    RTTR_ENABLE(Machine_State, Hydraulic_Flow_Rate_2, Hydraulic_Flow_Rate_1, Pilot_Pressure_2, Pilot_Pressure_1, Pressure_2, Pressure_1, Vehicle_Azimuth, Swing_Center_Position_3, Swing_Center_Position_2, Swing_Center_Position_1, Front_Pin_Position_3, Front_Pin_Position_2, Front_Pin_Position_1, Roll_Pitch_Angle, Front_Angular_Velocity, Front_Angle, Machine_Setting_Cmd, Pilot_Pressure_Cmd_2, Pilot_Pressure_Cmd_1)
+    RTTR_ENABLE(Velocity_Cmd_2, Velocity_Cmd_1, Machine_State, Hydraulic_Flow_Rate_2, Hydraulic_Flow_Rate_1, Pilot_Pressure_2, Pilot_Pressure_1, Pressure_2, Pressure_1, Vehicle_Azimuth, Swing_Center_Position_3, Swing_Center_Position_2, Swing_Center_Position_1, Front_Pin_Position_3, Front_Pin_Position_2, Front_Pin_Position_1, Roll_Pitch_Angle, Front_Angular_Velocity, Front_Angle, Machine_Setting_Cmd, Pilot_Pressure_Cmd_2, Pilot_Pressure_Cmd_1)
   };
 
   RTTR_REGISTRATION
   {
+    rttr::registration::class_<Velocity_Cmd_2>("Velocity_Cmd_2")
+      .constructor<>()
+      .property("Velocity_Cmd_2::target_travel_yaw_rate", &Velocity_Cmd_2::target_travel_yaw_rate)
+      .property("Velocity_Cmd_2::target_travel_left_velocity", &Velocity_Cmd_2::target_travel_left_velocity)
+      .property("Velocity_Cmd_2::target_travel_right_velocity", &Velocity_Cmd_2::target_travel_right_velocity)
+      .property("Velocity_Cmd_2::target_travel_center_velocity", &Velocity_Cmd_2::target_travel_center_velocity);
+
+    rttr::registration::class_<Velocity_Cmd_1>("Velocity_Cmd_1")
+      .constructor<>()
+      .property("Velocity_Cmd_1::swing_target_anguler_velocity", &Velocity_Cmd_1::swing_target_anguler_velocity)
+      .property("Velocity_Cmd_1::bucket_target_anguler_velocity", &Velocity_Cmd_1::bucket_target_anguler_velocity)
+      .property("Velocity_Cmd_1::arm_target_anguler_velocity", &Velocity_Cmd_1::arm_target_anguler_velocity)
+      .property("Velocity_Cmd_1::boom_target_anguler_velocity", &Velocity_Cmd_1::boom_target_anguler_velocity);
+
     rttr::registration::class_<Machine_State>("Machine_State")
         .constructor<>()
         .property("Machine_State::alive_counter", &Machine_State::alive_counter)

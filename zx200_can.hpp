@@ -29,12 +29,16 @@ public:
 
     pi_cmd1 = boost::shared_ptr<zx200::Pilot_Pressure_Cmd_1>(new zx200::Pilot_Pressure_Cmd_1{});
     pi_cmd2 = boost::shared_ptr<zx200::Pilot_Pressure_Cmd_2>(new zx200::Pilot_Pressure_Cmd_2{});
+    vel_cmd1 = boost::shared_ptr<zx200::Velocity_Cmd_1>(new zx200::Velocity_Cmd_1{});
+    vel_cmd2 = boost::shared_ptr<zx200::Velocity_Cmd_2>(new zx200::Velocity_Cmd_2{});
     setting_cmd = boost::shared_ptr<zx200::Machine_Setting_Cmd>(new zx200::Machine_Setting_Cmd{});
 
     alive_cnt = 0;
+    front_control_mode = control_type::None;
+    travel_control_mode = control_type::None;
     start_receive();
-    send_timer.async_wait(boost::bind(&zx200_can::send_pi_cmd1, this));
-    send_timer1.async_wait(boost::bind(&zx200_can::send_pi_cmd2, this));
+    send_timer.async_wait(boost::bind(&zx200_can::send_cmd1, this));
+    send_timer1.async_wait(boost::bind(&zx200_can::send_cmd2, this));
     send_timer2.async_wait(boost::bind(&zx200_can::send_machine_setting_cmd, this));
     };
     ~zx200_can()
@@ -57,27 +61,54 @@ public:
       setting_cmd = boost::make_shared<zx200::Machine_Setting_Cmd>(cmd);
     }
 
+    enum control_type {None=0, Effort=1, Velocity=2, Position=3};
+
   private:
-    void send_pi_cmd1()
+    void send_cmd1()
     {
       frame f;
-      zx200_dbc::encode(*pi_cmd1, f);
 
-      // sock.send(canary::net::buffer(&f, sizeof(f)));
-      sock.async_send(canary::net::buffer(&f, sizeof(f)), boost::bind(&zx200_can::send_handle, this));
-      send_timer.expires_at(send_timer.expiry() + boost::asio::chrono::milliseconds(pi_cmd1->Cycle_time()));
-      send_timer.async_wait(boost::bind(&zx200_can::send_pi_cmd1, this));
+      switch(front_control_mode){
+        case control_type::None:
+          break;
+        case control_type::Effort:
+          zx200_dbc::encode(*pi_cmd1, f);
+          sock.async_send(canary::net::buffer(&f, sizeof(f)), boost::bind(&zx200_can::send_handle, this));
+          send_timer.expires_at(send_timer.expiry() + boost::asio::chrono::milliseconds(pi_cmd1->Cycle_time()));
+          break;
+        case control_type::Velocity:
+          zx200_dbc::encode(*vel_cmd1, f);
+          sock.async_send(canary::net::buffer(&f, sizeof(f)), boost::bind(&zx200_can::send_handle, this));
+          send_timer.expires_at(send_timer.expiry() + boost::asio::chrono::milliseconds(vel_cmd1->Cycle_time()));
+          break;
+        case control_type::Position:
+          break;
+      }
+      send_timer.async_wait(boost::bind(&zx200_can::send_cmd1, this));
     }
 
-    void send_pi_cmd2()
+    void send_cmd2()
     {
       frame f;
-      zx200_dbc::encode(*pi_cmd2, f);
 
-      // sock.send(canary::net::buffer(&f, sizeof(f)));
-      sock.async_send(canary::net::buffer(&f, sizeof(f)), boost::bind(&zx200_can::send_handle, this));
-      send_timer1.expires_at(send_timer1.expiry() + boost::asio::chrono::milliseconds(pi_cmd2->Cycle_time()));
-      send_timer1.async_wait(boost::bind(&zx200_can::send_pi_cmd2, this));
+      switch(travel_control_mode){
+        case control_type::None:
+          break;
+        case control_type::Effort:
+          zx200_dbc::encode(*pi_cmd2, f);
+          sock.async_send(canary::net::buffer(&f, sizeof(f)), boost::bind(&zx200_can::send_handle, this));
+          send_timer.expires_at(send_timer.expiry() + boost::asio::chrono::milliseconds(pi_cmd2->Cycle_time()));
+          break;
+        case control_type::Velocity:
+          zx200_dbc::encode(*vel_cmd2, f);
+          sock.async_send(canary::net::buffer(&f, sizeof(f)), boost::bind(&zx200_can::send_handle, this));
+          send_timer.expires_at(send_timer.expiry() + boost::asio::chrono::milliseconds(vel_cmd2->Cycle_time()));
+          break;
+        case control_type::Position:
+          break;
+      }
+      send_timer.async_wait(boost::bind(&zx200_can::send_cmd2, this));
+
     }
 
     void send_machine_setting_cmd()
@@ -118,6 +149,8 @@ public:
     frame recv_f;
     boost::shared_ptr<zx200::Pilot_Pressure_Cmd_1> pi_cmd1;
     boost::shared_ptr<zx200::Pilot_Pressure_Cmd_2> pi_cmd2;
+    boost::shared_ptr<zx200::Velocity_Cmd_1> vel_cmd1;
+    boost::shared_ptr<zx200::Velocity_Cmd_2> vel_cmd2;
     boost::shared_ptr<zx200::Machine_Setting_Cmd> setting_cmd;
-    std::uint8_t alive_cnt;
+    std::uint8_t alive_cnt,travel_control_mode, front_control_mode;
 };
