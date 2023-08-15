@@ -14,6 +14,8 @@
 
 #include "zx200_dbc.hpp"
 
+#define row 20
+
 class zx200_keynav : public zx200_can
 {
 public:
@@ -38,19 +40,19 @@ public:
     noecho();
     getmaxyx(stdscr, rows, cols);
 
-    gwSub[0] = newwin(rows / 2 - 1, cols / 3 - 1, 0, cols / 3 * 0);
-    gwSub[1] = newwin(rows / 2 - 1, cols / 3 - 1, 0, cols / 3 * 1);
-    gwSub[2] = newwin(rows / 2 - 1, cols / 3 - 1, 0, cols / 3 * 2);
+    gwSub[0] = newwin(row, cols / 3 - 1, 0, cols / 3 * 0);
+    gwSub[1] = newwin(row, cols / 3 - 1, 0, cols / 3 * 1);
+    gwSub[2] = newwin(row, cols / 3 - 1, 0, cols / 3 * 2);
     scrollok(gwSub[0], TRUE);
     scrollok(gwSub[1], TRUE);
     scrollok(gwSub[2], TRUE);
-    mvvline(0, cols / 3 - 1, '|', rows / 2);
-    mvvline(0, cols / 3 * 2 - 1, '|', rows / 2);
-    gwUI = newwin(rows / 2, cols, rows / 2 + 1, 0);
+    mvvline(0, cols / 3 - 1, '|', row);
+    mvvline(0, cols / 3 * 2 - 1, '|', row);
+    gwUI = newwin(rows-row, cols, row+1, 0);
     scrollok(gwUI, TRUE);
     wtimeout(gwUI, 100);
 
-    mvhline(rows / 2, 0, '-', cols);
+    mvhline(row, 0, '-', cols);
     refresh();
 
     werase(gwSub[0]);
@@ -303,8 +305,5 @@ int main(int argc, char **argv)
     keynav.update_window();
     // usleep(10000);
   }
-
-  std::cout << "Bye,bye...." << std::endl;
-
   return 0;
 }
