@@ -40,6 +40,17 @@ public:
     noecho();
     getmaxyx(stdscr, rows, cols);
 
+    if(rows < row+1)
+    {
+      std::cout << "This windows is too small for keynav!!\n"
+                << "Increase the height of this window.\n"
+                << "Bye,bye...." << std::endl;
+      isFault = true;
+    }else
+    {
+      isFault = false;
+    }
+
     gwSub[0] = newwin(row, cols / 3 - 1, 0, cols / 3 * 0);
     gwSub[1] = newwin(row, cols / 3 - 1, 0, cols / 3 * 1);
     gwSub[2] = newwin(row, cols / 3 - 1, 0, cols / 3 * 2);
@@ -62,10 +73,13 @@ public:
     wprintw(gwSub[0], "  w:boom raise, s:boom lower\n");
     wprintw(gwSub[0], "  e:arm crowd, d:arm dump\n");
     wprintw(gwSub[0], "  r:bucket crowd, f:bucket dump\n");
-    wprintw(gwSub[0], "  t:swing right, g:swing left\n\n");
+    wprintw(gwSub[0], "  t:swing right, g:swing left\n");
+    wprintw(gwSub[0], "  controL_mode 0:Stop, 1:Effort, 2:Velocity\n\n");
+ 
     wprintw(gwSub[0], " Tracks:\n");
     wprintw(gwSub[0], "  i:forward, k:backward\n");
-    wprintw(gwSub[0], "  j:left turn, l:right turn\n\n");
+    wprintw(gwSub[0], "  j:left turn, l:right turn\n");
+    wprintw(gwSub[0], "  controL_mode 3:Stop, 4:Effort, 5:Velocity\n\n");
     wprintw(gwSub[0], "  [SPACE]   All stop\n");
     wprintw(gwSub[0], "   q        Quit ");
 
@@ -78,9 +92,11 @@ public:
     delwin(gwSub[2]);
     delwin(gwUI);
     endwin();
+    std::cout << "Bye,bye...." << std::endl;
   }
-  bool update_command(int com)
+  bool update_command()
   {
+    char com = wgetch(gwUI);
     switch (com)
     {
     case 'w':
@@ -167,7 +183,7 @@ public:
       pi_cmd2 = boost::shared_ptr<zx200::Pilot_Pressure_Cmd_2>(new zx200::Pilot_Pressure_Cmd_2{});
       setting_cmd = boost::shared_ptr<zx200::Machine_Setting_Cmd>(new zx200::Machine_Setting_Cmd{});
       setting_cmd->engine_rpm = 900;
-      return false;
+      isFault = true;
     }
 
     if (setting_cmd->engine_rpm < 0.)
@@ -179,7 +195,7 @@ public:
     set_pilot_pressure_cmd2(*pi_cmd2);
     set_machine_setting_cmd(*setting_cmd);
 
-    return true;
+    return isFault;
   }
   void update_window()
   {
@@ -232,7 +248,13 @@ public:
 
     wrefresh(gwUI);
   }
-  WINDOW *gwSub[3], *gwUI;
+
+  template <typename ... Args>
+  void nav_printf(const char *format, Args const & ... args)
+  {
+    wprintw(gwUI,format, args ...);
+    wrefresh(gwUI);
+  }
 
 private:
   void pilot_pressure_clamp(double &input)
@@ -275,9 +297,12 @@ private:
     pi1 = std::round(pi1*100)/100;
     pi2 = std::round(pi2*100)/100;
   }
-    boost::shared_ptr<zx200::Pilot_Pressure_Cmd_1> pi_cmd1;
-    boost::shared_ptr<zx200::Pilot_Pressure_Cmd_2> pi_cmd2;
-    boost::shared_ptr<zx200::Machine_Setting_Cmd> setting_cmd;
+
+  bool isFault;
+  WINDOW *gwSub[3], *gwUI;
+  boost::shared_ptr<zx200::Pilot_Pressure_Cmd_1> pi_cmd1;
+  boost::shared_ptr<zx200::Pilot_Pressure_Cmd_2> pi_cmd2;
+  boost::shared_ptr<zx200::Machine_Setting_Cmd> setting_cmd;
 };
 
 int main(int argc, char **argv)
@@ -298,12 +323,11 @@ int main(int argc, char **argv)
 
   bool doit = true;
 
-  while (doit)
+  while (!keynav.update_command())
   {
-    char com = wgetch(keynav.gwUI);
-    doit = keynav.update_command(com);
+    static int i;
+    keynav.nav_printf("%d\n",i++);
     keynav.update_window();
-    // usleep(10000);
   }
   return 0;
 }
