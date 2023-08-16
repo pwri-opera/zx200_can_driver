@@ -172,6 +172,24 @@ public:
       pilot_pressure_pi1_increase(pi_cmd2->right_track_forward, pi_cmd2->right_track_backward);
       // pilot_pressure_pi2_increase(pi_cmd2->left_track_forward, pi_cmd2->left_track_backward);
       break;
+    case '0':
+      setting_cmd->front_signal_switch_command = control_type::None;
+      break;
+    case '1':
+      setting_cmd->front_signal_switch_command = control_type::Effort;
+      break;
+    case '2':
+      setting_cmd->front_signal_switch_command = control_type::Velocity;
+      break;
+    case '3':
+      setting_cmd->travel_signal_switch_command = control_type::None;
+      break;
+    case '4':
+      setting_cmd->travel_signal_switch_command = control_type::Effort;
+      break;
+    case '5':
+      setting_cmd->travel_signal_switch_command = control_type::Velocity;
+      break;
     case ' ':
       pi_cmd1 = boost::shared_ptr<zx200::Pilot_Pressure_Cmd_1>(new zx200::Pilot_Pressure_Cmd_1{});
       pi_cmd2 = boost::shared_ptr<zx200::Pilot_Pressure_Cmd_2>(new zx200::Pilot_Pressure_Cmd_2{});
@@ -240,8 +258,11 @@ public:
     wprintw(gwSub[2], "  control_state   %d [-]\n", state.control_state);
     wprintw(gwSub[2], "  engine_state   %d [0:off,1:one]\n", state.engine_state);
     wprintw(gwSub[2], "  hydraulic_oil_temp   %d [degC]\n", state.hydraulic_oil_temp);
-    wprintw(gwSub[2], "  alive_counter   %d [-]\n", state.alive_counter);
+    wprintw(gwSub[2], "  alive_counter   %d [-]\n\n", state.alive_counter);
 
+    wprintw(gwSub[2], "Input Control Mode:\n");
+    wprintw(gwSub[2], "  front:%d\n",setting_cmd->front_signal_switch_command);
+    wprintw(gwSub[2], "  tracks:%d\n",setting_cmd->travel_signal_switch_command);
 
     wrefresh(gwSub[1]);
     wrefresh(gwSub[2]);

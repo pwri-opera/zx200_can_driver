@@ -253,8 +253,8 @@ namespace zx200
   struct Machine_Setting_Cmd
   {
     std::uint8_t horn_cmd;
-    std::uint8_t travel_signal_switch_cmd;
-    std::uint8_t front_signal_switch_cmd;
+    std::uint8_t travel_signal_switch_command;
+    std::uint8_t front_signal_switch_command;
     bool working_mode_notice;
     std::uint8_t yellow_led_mode;
     std::uint8_t travel_speed_mode;
@@ -455,6 +455,9 @@ namespace zx200
 
     rttr::registration::class_<Machine_Setting_Cmd>("Machine_Setting_Cmd")
         .constructor<>()
+        .property("Machine_Setting_Cmd::horn_cmd", &Machine_Setting_Cmd::horn_cmd)
+        .property("Machine_Setting_Cmd::travel_signal_switch_command", &Machine_Setting_Cmd::travel_signal_switch_command)
+        .property("Machine_Setting_Cmd::front_signal_switch_command", &Machine_Setting_Cmd::front_signal_switch_command)
         .property("Machine_Setting_Cmd::working_mode_notice", &Machine_Setting_Cmd::working_mode_notice)
         .property("Machine_Setting_Cmd::yellow_led_mode", &Machine_Setting_Cmd::yellow_led_mode)
         .property("Machine_Setting_Cmd::travel_speed_mode", &Machine_Setting_Cmd::travel_speed_mode)
@@ -475,8 +478,6 @@ namespace zx200
 
     rttr::registration::class_<Pilot_Pressure_Cmd_1>("Pilot_Pressure_Cmd_1")
         .constructor<>()
-        // .property_readonly("Pilot_Pressure_Cmd_1::id", &Pilot_Pressure_Cmd_1::id)
-        // .property_readonly("Pilot_Pressure_Cmd_1::cycle_time", &Pilot_Pressure_Cmd_1::cycle_time)
         .property("Pilot_Pressure_Cmd_1::swing_right", &Pilot_Pressure_Cmd_1::swing_right)
         .property("Pilot_Pressure_Cmd_1::swing_left", &Pilot_Pressure_Cmd_1::swing_left)
         .property("Pilot_Pressure_Cmd_1::bucket_dump", &Pilot_Pressure_Cmd_1::bucket_dump)

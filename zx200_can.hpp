@@ -68,7 +68,7 @@ public:
     {
       frame f;
 
-      switch(front_control_mode){
+      switch(setting_cmd->front_signal_switch_command){
         case control_type::None:
           break;
         case control_type::Effort:
@@ -91,7 +91,7 @@ public:
     {
       frame f;
 
-      switch(travel_control_mode){
+      switch(setting_cmd->travel_signal_switch_command){
         case control_type::None:
           break;
         case control_type::Effort:
