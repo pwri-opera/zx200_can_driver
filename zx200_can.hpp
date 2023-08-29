@@ -34,8 +34,8 @@ public:
     setting_cmd = boost::shared_ptr<zx200::Machine_Setting_Cmd>(new zx200::Machine_Setting_Cmd{});
 
     alive_cnt = 0;
-    front_control_mode = control_type::None;
-    travel_control_mode = control_type::None;
+    front_control_mode = front_control_type::fNone;
+    travel_control_mode = tracks_control_type::tNone;
     start_receive();
     send_timer.async_wait(boost::bind(&zx200_can::send_cmd1, this));
     send_timer1.async_wait(boost::bind(&zx200_can::send_cmd2, this));
@@ -61,7 +61,8 @@ public:
       setting_cmd = boost::make_shared<zx200::Machine_Setting_Cmd>(cmd);
     }
 
-    enum control_type {None=0, Effort=1, Velocity=2, Position=3};
+    enum front_control_type {fNone=0, fEffort=1, fVelocity=2};
+    enum tracks_control_type {tNone=0, tEffort=1, tVelocityTracks=2, tVelocityCenter=3};
 
   private:
     void send_cmd1()
@@ -69,19 +70,17 @@ public:
       frame f;
 
       switch(setting_cmd->front_signal_switch_command){
-        case control_type::None:
+        case front_control_type::fNone:
           break;
-        case control_type::Effort:
+        case front_control_type::fEffort:
           zx200_dbc::encode(*pi_cmd1, f);
           sock.async_send(canary::net::buffer(&f, sizeof(f)), boost::bind(&zx200_can::send_handle, this));
           send_timer.expires_at(send_timer.expiry() + boost::asio::chrono::milliseconds(pi_cmd1->Cycle_time()));
           break;
-        case control_type::Velocity:
+        case front_control_type::fVelocity:
           zx200_dbc::encode(*vel_cmd1, f);
           sock.async_send(canary::net::buffer(&f, sizeof(f)), boost::bind(&zx200_can::send_handle, this));
           send_timer.expires_at(send_timer.expiry() + boost::asio::chrono::milliseconds(vel_cmd1->Cycle_time()));
-          break;
-        case control_type::Position:
           break;
       }
       send_timer.async_wait(boost::bind(&zx200_can::send_cmd1, this));
@@ -92,19 +91,22 @@ public:
       frame f;
 
       switch(setting_cmd->travel_signal_switch_command){
-        case control_type::None:
+        case tracks_control_type::tNone:
           break;
-        case control_type::Effort:
+        case tracks_control_type::tEffort:
           zx200_dbc::encode(*pi_cmd2, f);
           sock.async_send(canary::net::buffer(&f, sizeof(f)), boost::bind(&zx200_can::send_handle, this));
           send_timer.expires_at(send_timer.expiry() + boost::asio::chrono::milliseconds(pi_cmd2->Cycle_time()));
           break;
-        case control_type::Velocity:
+        case tracks_control_type::tVelocityTracks:
           zx200_dbc::encode(*vel_cmd2, f);
           sock.async_send(canary::net::buffer(&f, sizeof(f)), boost::bind(&zx200_can::send_handle, this));
           send_timer.expires_at(send_timer.expiry() + boost::asio::chrono::milliseconds(vel_cmd2->Cycle_time()));
           break;
-        case control_type::Position:
+        case tracks_control_type::tVelocityCenter:
+          zx200_dbc::encode(*vel_cmd2, f);
+          sock.async_send(canary::net::buffer(&f, sizeof(f)), boost::bind(&zx200_can::send_handle, this));
+          send_timer.expires_at(send_timer.expiry() + boost::asio::chrono::milliseconds(vel_cmd2->Cycle_time()));
           break;
       }
       send_timer.async_wait(boost::bind(&zx200_can::send_cmd2, this));

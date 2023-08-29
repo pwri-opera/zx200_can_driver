@@ -79,7 +79,7 @@ public:
     wprintw(gwSub[0], " Tracks:\n");
     wprintw(gwSub[0], "  i:forward, k:backward\n");
     wprintw(gwSub[0], "  j:left turn, l:right turn\n");
-    wprintw(gwSub[0], "  controL_mode 3:Stop, 4:Effort, 5:Velocity\n\n");
+    wprintw(gwSub[0], "  controL_mode 3:Stop, 4:Effort, 5:VelocityTracks, 6:VelocityCenter\n\n");
     wprintw(gwSub[0], "  [SPACE]   All stop\n");
     wprintw(gwSub[0], "   q        Quit ");
 
@@ -173,22 +173,32 @@ public:
       // pilot_pressure_pi2_increase(pi_cmd2->left_track_forward, pi_cmd2->left_track_backward);
       break;
     case '0':
-      setting_cmd->front_signal_switch_command = control_type::None;
+      setting_cmd->front_signal_switch_command = front_control_type::fNone;
+      nav_printf("Front Control : None\n");
       break;
     case '1':
-      setting_cmd->front_signal_switch_command = control_type::Effort;
+      setting_cmd->front_signal_switch_command = front_control_type::fEffort;
+      nav_printf("Front Control : Effort\n");
       break;
     case '2':
-      setting_cmd->front_signal_switch_command = control_type::Velocity;
+      setting_cmd->front_signal_switch_command = front_control_type::fVelocity;
+      nav_printf("Front Control : Velocity\n");
       break;
     case '3':
-      setting_cmd->travel_signal_switch_command = control_type::None;
+      setting_cmd->travel_signal_switch_command = tracks_control_type::tNone;
+      nav_printf("Tracks Control : None\n");
       break;
     case '4':
-      setting_cmd->travel_signal_switch_command = control_type::Effort;
+      setting_cmd->travel_signal_switch_command = tracks_control_type::tEffort;
+      nav_printf("Tracks Control : Effort\n");
       break;
     case '5':
-      setting_cmd->travel_signal_switch_command = control_type::Velocity;
+      setting_cmd->travel_signal_switch_command = tracks_control_type::tVelocityTracks;
+      nav_printf("Tracks Control : Velocity of each track\n");
+      break;
+    case '6':
+      setting_cmd->travel_signal_switch_command = tracks_control_type::tVelocityCenter;
+      nav_printf("Tracks Control : Velocity of Center\n");
       break;
     case ' ':
       pi_cmd1 = boost::shared_ptr<zx200::Pilot_Pressure_Cmd_1>(new zx200::Pilot_Pressure_Cmd_1{});
@@ -346,8 +356,8 @@ int main(int argc, char **argv)
 
   while (!keynav.update_command())
   {
-    static int i;
-    keynav.nav_printf("%d\n",i++);
+    // static int i;
+    // keynav.nav_printf("%d\n",i++);
     keynav.update_window();
   }
   return 0;
