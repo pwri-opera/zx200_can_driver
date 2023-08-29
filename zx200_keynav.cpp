@@ -174,31 +174,31 @@ public:
       break;
     case '0':
       setting_cmd->front_signal_switch_command = front_control_type::fNone;
-      nav_printf("Front Control : None\n");
+      wprintw(gwUI,"Front Control : None\n");
       break;
     case '1':
       setting_cmd->front_signal_switch_command = front_control_type::fEffort;
-      nav_printf("Front Control : Effort\n");
+      wprintw(gwUI, "Front Control : Effort\n");
       break;
     case '2':
       setting_cmd->front_signal_switch_command = front_control_type::fVelocity;
-      nav_printf("Front Control : Velocity\n");
+      wprintw(gwUI,"Front Control : Velocity\n");
       break;
     case '3':
       setting_cmd->travel_signal_switch_command = tracks_control_type::tNone;
-      nav_printf("Tracks Control : None\n");
+      wprintw(gwUI,"Tracks Control : None\n");
       break;
     case '4':
       setting_cmd->travel_signal_switch_command = tracks_control_type::tEffort;
-      nav_printf("Tracks Control : Effort\n");
+      wprintw(gwUI,"Tracks Control : Effort\n");
       break;
     case '5':
       setting_cmd->travel_signal_switch_command = tracks_control_type::tVelocityTracks;
-      nav_printf("Tracks Control : Velocity of each track\n");
+      wprintw(gwUI,"Tracks Control : Velocity of each track\n");
       break;
     case '6':
       setting_cmd->travel_signal_switch_command = tracks_control_type::tVelocityCenter;
-      nav_printf("Tracks Control : Velocity of Center\n");
+      wprintw(gwUI,"Tracks Control : Velocity of Center\n");
       break;
     case ' ':
       pi_cmd1 = boost::shared_ptr<zx200::Pilot_Pressure_Cmd_1>(new zx200::Pilot_Pressure_Cmd_1{});
