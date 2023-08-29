@@ -67,7 +67,7 @@ public:
   private:
     void send_cmd1()
     {
-      frame f;
+      frame f{};
 
       switch(setting_cmd->front_signal_switch_command){
         case front_control_type::fNone:
@@ -88,7 +88,7 @@ public:
 
     void send_cmd2()
     {
-      frame f;
+      frame f{};
 
       switch(setting_cmd->travel_signal_switch_command){
         case tracks_control_type::tNone:
@@ -115,7 +115,7 @@ public:
 
     void send_machine_setting_cmd()
     {
-      frame f;
+      frame f{};
       setting_cmd->alive_counter = alive_cnt++;
       zx200_dbc::encode(*setting_cmd, f);
 
