@@ -257,7 +257,6 @@ public:
     werase(gwSub[2]);
     wprintw(gwSub[2], "Machine State:\n");
     wprintw(gwSub[2], "  lock_cmd_state   %d [0:off,1:on]\n", state.lock_cmd_state);
-    wprintw(gwSub[2], "  unlock_cmd_state   %d [0:off,1:on]\n", state.unlock_cmd_state);
     wprintw(gwSub[2], "  pi_shutoff_state   %d [0:lock,1:unlock]\n", state.pilot_shutoff_valve_state);
     wprintw(gwSub[2], "  zx200x7_system_error   %d [0:ok,1:err]\n", state.zx200x7_system_error);
     wprintw(gwSub[2], "  can_error_pl   %d [0:ok,1:err]\n", state.can_error_pl);

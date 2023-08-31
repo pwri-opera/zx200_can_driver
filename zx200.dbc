@@ -65,7 +65,6 @@ BO_ 2566882536 Machine_State: 8 Hitachi_AutomationController
  SG_ can_error_pl : 9|1@1+ (1,0) [0|0] "-"  ExternalController
  SG_ zx200x7_system_error : 8|1@1+ (1,0) [0|0] "-"  ExternalController
  SG_ pilot_shutoff_valve_state : 6|1@1+ (1,0) [0|0] "-"  ExternalController
- SG_ unlock_cmd_state : 1|1@1+ (1,0) [0|0] "-"  ExternalController
  SG_ lock_cmd_state : 0|1@1+ (1,0) [0|0] "-"  ExternalController
 
 BO_ 2566881512 Hydraulic_Flow_Rate_2: 8 Hitachi_AutomationController
@@ -170,8 +169,8 @@ BO_ 2566880744 Front_Angle: 8 Hitachi_AutomationController
 
 BO_ 2566874634 Machine_Setting_Cmd: 8 ExternalController
  SG_ horn_cmd : 14|2@1+ (1,0) [0|1] "-"  Hitachi_AutomationController
- SG_ travel_signal_switch_command : 28|4@1+ (1,0) [0|3] ""  Hitachi_AutomationController
- SG_ front_signal_switch_command : 24|4@1+ (1,0) [0|2] ""  Hitachi_AutomationController
+ SG_ travel_signal_switch_command : 24|4@1+ (1,0) [0|3] ""  Hitachi_AutomationController
+ SG_ front_signal_switch_command : 28|4@1+ (1,0) [0|2] ""  Hitachi_AutomationController
  SG_ working_mode_notice : 11|1@1+ (1,0) [0|0] "-"  Hitachi_AutomationController
  SG_ yellow_led_mode : 12|2@1+ (1,0) [0|2] "-"  Hitachi_AutomationController
  SG_ travel_speed_mode : 9|2@1+ (1,0) [0|0] "-"  Hitachi_AutomationController
